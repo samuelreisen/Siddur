@@ -54,6 +54,7 @@ cd android && ./gradlew assembleDebug   # needs JDK 17+ and ANDROID_HOME
 - `src/app.css`: all styles. HIG-style tokens, light, dark and increased-contrast modes.
 - `src/calendar.js`: Hebrew calendar facts for a day (`dayFacts`), Hebrew numerals, labels. Pure functions, built on `Intl` with the Hebrew calendar.
 - `src/app.js`: settings, which service to build, the label rules that show or hide inserts, rendering, mourner tools, tabs.
+- `src/tilt.js`: tilt to turn pages (motion sensor flick detection, page scroll, toast). Built before `app.js` in the same script, so it shares `settings`.
 - `src/data.json`: generated, trimmed text (406 sections plus Psalms 16 and 49). Do not hand-edit; regenerate with `tools/build-data.js`.
 - `data/raw-siddur-ashkenaz.json`: full Sefaria download (449 of 456 sections). `data/order.txt`: section order. `data/raw-psalm-16.json`, `data/raw-psalm-49.json`.
 - `tools/fetch-sefaria.js`, `tools/build-data.js`, `tools/build.js`: the pipeline above.
@@ -69,7 +70,7 @@ cd android && ./gradlew assembleDebug   # needs JDK 17+ and ANDROID_HOME
 - Paragraphs are Sefaria HTML: `<b>` for opening words, `<small>` for instructions and labels, sometimes `<em><small>` (Kaddish, festival Amidah).
 - 163 sections have no English. Shabbat sections borrow the weekday English when the paragraph counts match.
 
-Settings (`localStorage['siddur.settings']`): `mourner, minyan, shiva, israel, female, sayTal, english, notes, translit, size`. Israel and sayTal default to on when the time zone is Asia/Jerusalem or Tel_Aviv.
+Settings (`localStorage['siddur.settings']`): `mourner, minyan, shiva, israel, female, sayTal, english, notes, translit, size, tilt, tiltStrength` (`tiltStrength` is `firm`, `hard` or `veryhard`). Israel and sayTal default to on when the time zone is Asia/Jerusalem or Tel_Aviv.
 
 ## 5. Core logic
 1. **Which day.** `context()` in `app.js`: Maariv uses tomorrow's date (the Hebrew day has begun), except between midnight and 4am with no date override. Everything else uses today.
@@ -96,6 +97,7 @@ Regression targets (numbers this logic was verified against, re-check after chan
 - **Mourner tools** (`renderMourner`, `elMalei`, `nextYahrzeit`): El Malei Rachamim text is written in the code (not from Sefaria), with male and female forms. Yahrzeit: Adar in a non-leap year maps to Adar I in a leap year (Ashkenazi custom); a 30th that doesn't exist that year shows the 1st of the next month, with a note that customs differ.
 - **Chanukah candles**: shown at the top of weekday Maariv and Friday-night services during Chanukah, with the night number and the Shehecheyanu rule.
 - **Kaddish transliteration**: written in `TRANSLIT` in `app.js` (Mourner's and D'Rabbanan).
+- **Tilt to turn pages** (`src/tilt.js`, Settings › Display, off by default): reads `devicemotion` rotation speed. A flick to the left (negative value) scrolls forward one screen minus the top bar, section bar and 48px overlap; a flick to the right scrolls back. It turns only when the speed passes the threshold (Firm 200, Hard 300 default, Very Hard 420 degrees per second) for 2 readings in a row, then ignores all motion for 1000 ms so the swing back doesn't undo the turn. Ignored while a finger is on the screen, on the Mourners and Settings tabs, and when the page is hidden. Counts a twist (rotation about the screen's vertical axis: `gamma` in portrait, `beta` in landscape) or a steer (`alpha`, counterclockwise is left), whichever is stronger. Shows a "Next page" / "Previous page" toast and a 12 ms vibration. If no readings arrive within 2.5 s it says sensors aren't available. On iOS it asks permission on the tap; only an explicit "denied" turns it off (Chromium answers "prompt" without asking).
 
 ## 7. Traps and facts only real data revealed
 - Sefaria's section order is not the API return order. Always use `data/order.txt`.
@@ -119,6 +121,8 @@ Only browser/WebView `localStorage`: `siddur.settings` and `siddur.mourner`. Eve
 - Hebrew text is right-aligned on phones and justified at 600px and wider (justify left big gaps on narrow screens).
 - Artifact pages can't use reserved hashes (`settings` and others), so tabs are in-page state, not URL routes.
 - Wake lock is requested and may be refused; Android keeps the screen on via `FLAG_KEEP_SCREEN_ON`.
+- The claude.ai artifact viewer blocks motion sensors (no motion capability exists for this account), so tilt never works on the artifact; it shows the "sensors aren't available" note there.
+- `[hidden] { display: none !important; }` is in `app.css` because the standalone page (Android) has no host reset and some hidden rows use `display: flex`.
 
 ## 10. Platform and build notes
 - Android: package `com.samuelreisen.siddur`, min API 24, target and compile 35, AGP 8.7.3, Kotlin 2.0.21, Gradle wrapper 8.14.3, versionName 1.0 (`shellVersion` 1.0.0 in `scripts/mark.config.json`). Debug-signed only.
@@ -137,17 +141,24 @@ Only browser/WebView `localStorage`: `siddur.settings` and `siddur.mourner`. Eve
 
 ## 12. Open items and known quirks (prioritised)
 1. The Android APK has not been run on a physical device.
-2. CI builds the APK on GitHub (fixed setup-android packages). The artifact upload may fail while the account artifact quota is full; it no longer fails the job.
-3. Not yet supported: Rosh Hashanah and Yom Kippur services (points to a machzor), Selichot, Hoshanot, Yizkor, Birkat HaMazon, Kiddush for festivals, Sefardi or Chabad nusach.
-4. Customs not modeled: Yom HaAtzmaut and Yom Yerushalayim (Tachanun, Hallel), Shushan Purim in Jerusalem, a chatan or brit in the minyan (no Tachanun), Tachanun on Erev Rosh Hashanah at Selichot.
-5. Festival-day services reuse Shabbat Shacharit parts; Shabbat and festival Kedushah wording comes straight from the source sections.
-6. Hebrew-only UI labels in the source text (instructions) are shown in Hebrew.
+2. Tilt to turn pages was tested only with simulated sensor readings. On a real phone, check the direction (left must be forward), the landscape axis signs, and that "Hard" feels right; adjust `TILT_THRESHOLDS` or the signs in `tiltRate()` if not.
+3. CI builds the APK on GitHub (fixed setup-android packages). The artifact upload may fail while the account artifact quota is full; it no longer fails the job.
+4. Not yet supported: Rosh Hashanah and Yom Kippur services (points to a machzor), Selichot, Hoshanot, Yizkor, Birkat HaMazon, Kiddush for festivals, Sefardi or Chabad nusach.
+5. Customs not modeled: Yom HaAtzmaut and Yom Yerushalayim (Tachanun, Hallel), Shushan Purim in Jerusalem, a chatan or brit in the minyan (no Tachanun), Tachanun on Erev Rosh Hashanah at Selichot.
+6. Festival-day services reuse Shabbat Shacharit parts; Shabbat and festival Kedushah wording comes straight from the source sections.
+7. Hebrew-only UI labels in the source text (instructions) are shown in Hebrew.
 
 ## 13. Rough chronology (why the code looks the way it does)
 - Session 1 (2026-11-04): asked for a siddur "asap" as an artifact plus an Android app with smart pages and mourner options. First plan was to type the texts; the owner said to find a siddur online, so the whole Metsudah siddur was pulled from Sefaria, and the day logic was built on its own instruction labels instead of hand-written texts. The Android shell was delegated to a Sonnet sub-agent and reviewed. The UI was then redesigned to the Apple HIG. Then this handoff system was added.
 
 ## 14. Change log
 Format: `### <date> – <title>` then the four fields **Asked**, **Changed**, **Verified**, **Not done**. Newest first. Mark entries read `### <date> – Mk <Roman> "<title>" – update file` and end with a **Mark file** line.
+
+### 2026-11-04 – Tilt to turn pages
+- **Asked** – "Make it so you can turn the page by tilting your phone left and go to the previous page by tilting right. Make it only work if you do it hard enough so you don't accidentally turn a page."
+- **Changed** – New `src/tilt.js` (flick detection on `devicemotion` rotation speed, page scroll, toast, vibration, sensor check, iOS permission); `tools/build.js` now joins `calendar.js`, `tilt.js`, `app.js`; `src/app.js` adds `tilt` and `tiltStrength` settings and calls `bindTilt()`; `src/index.html` adds the "Tilt to Turn Pages" switch, a Firm / Hard / Very Hard control and the toast; `src/app.css` adds toast and row styles plus a global `[hidden]` rule. Bug found and fixed while testing: Chromium's `DeviceMotionEvent.requestPermission()` returns "prompt" without asking, and the first version treated that as a refusal and switched tilt straight back off.
+- **Verified** – Headless Chromium with simulated `devicemotion` readings at 60 Hz, feature turned on by tapping the real switch: 17/17 checks passed. Off: no turn. Below 300 deg/s (150 to 250): no turn. Single 500 deg/s spikes: no turn. Two readings at -350: forward 0 to 690 px with "Next page". Swing back at +350 within 1 s: ignored. +350 after the cooldown: back 690 to 0. At the top: stays, "Already at the top". Very Hard: 350 ignored, 450 turns. Finger on screen: ignored. Settings tab: ignored. Steer (alpha +350) turns forward. No sensor readings: warning text after 2.5 s. 0 script errors. Prayer-logic checks unchanged (Omer day 33, Purim and Chanukah Al Hanissim, notes 0/41).
+- **Not done** – Not tried on a real phone, so the direction and the strength of "Hard" are untested by hand. Does not work in the claude.ai artifact (sensors blocked there). No new mark made.
 
 ### 2026-11-04 – CI: build passes, artifact upload made non-fatal
 - **Asked** – Automatic: CI failure on PR #1 at commit c3cca0c.

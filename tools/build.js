@@ -8,7 +8,7 @@ const ROOT = path.join(__dirname, '..');
 const read = f => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8');
 
 const data = read('data.json').replace(/<\//g, '<\\/');
-const js = read('calendar.js') + '\n' + read('app.js');
+const js = read('calendar.js') + '\n' + read('tilt.js') + '\n' + read('app.js');
 const page = read('index.html')
   .replace('/*CSS*/', () => read('app.css'))
   .replace('/*DATA*/', () => 'const SIDDUR_DATA = ' + data + ';')

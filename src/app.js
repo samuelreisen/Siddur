@@ -1,5 +1,5 @@
 // Siddur app: picks the right service for the day and shows or hides each insert by its label.
-/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear */
+/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt */
 
 const SECTIONS = SIDDUR_DATA.sections;
 const BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.k, s]));
@@ -8,7 +8,8 @@ const keysUnder = prefix => SECTIONS.filter(s => s.k.startsWith(prefix)).map(s =
 // ---------- settings ----------
 const DEFAULTS = {
   mourner: false, minyan: true, shiva: false, israel: false, female: false,
-  sayTal: false, english: false, notes: false, translit: true, size: 1.25
+  sayTal: false, english: false, notes: false, translit: true, size: 1.25,
+  tilt: false, tiltStrength: 'hard'
 };
 function loadSettings() {
   let saved = {};
@@ -664,4 +665,5 @@ function bind() {
 }
 
 bind();
+bindTilt();
 render();

@@ -97,6 +97,15 @@
     <div class="group-box list">
       <label class="row switch-row" for="opt-english"><span class="row-text"><span class="row-label">English Translation</span><span class="row-sub">Under each prayer where available</span></span><input type="checkbox" role="switch" id="opt-english"></label>
       <label class="row switch-row" for="opt-notes"><span class="row-text"><span class="row-label">Halachic Notes</span><span class="row-sub">The siddur’s small-print guidance, in Hebrew</span></span><input type="checkbox" role="switch" id="opt-notes"></label>
+      <label class="row switch-row" for="opt-tilt"><span class="row-text"><span class="row-label">Tilt to Turn Pages</span><span class="row-sub">Flick the phone left for the next page, right to go back</span><span class="row-sub row-warn" id="tilt-status"></span></span><input type="checkbox" role="switch" id="opt-tilt"></label>
+      <div class="row strength-row" id="tilt-strength-row" hidden>
+        <span class="row-text"><span class="row-label">Flick Strength</span><span class="row-sub">Harder means fewer accidental turns</span></span>
+        <div class="seg" role="group" aria-label="Flick strength">
+          <button type="button" data-strength="firm">Firm</button>
+          <button type="button" data-strength="hard">Hard</button>
+          <button type="button" data-strength="veryhard">Very Hard</button>
+        </div>
+      </div>
       <div class="row slider-row">
         <label for="opt-size" class="row-label">Hebrew Text Size</label>
         <div class="slider"><span class="a-small" aria-hidden="true">א</span><input type="range" id="opt-size" min="1" max="2.2" step="0.05"><span class="a-large" aria-hidden="true">א</span></div>
@@ -105,6 +114,8 @@
     </div>
   </section>
 </main>
+
+<div class="page-toast" id="page-toast" role="status" aria-live="polite" hidden></div>
 
 <nav class="tabbar" aria-label="Sections">
   <button type="button" data-tab="pray" aria-current="page">
