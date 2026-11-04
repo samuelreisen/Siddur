@@ -1,15 +1,15 @@
 <title>Siddur</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Nusach Ashkenaz siddur that sets itself for today's date, with options for mourners.">
+<meta name="description" content="Nusach Ashkenaz siddur that sets itself for today’s date, with options for mourners.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
 <style>/*CSS*/</style>
 
-<header class="bar">
+<header class="bar" id="bar">
   <div class="bar-inner">
-    <span class="brand" lang="he" dir="rtl">סִדּוּר</span>
-    <div class="seg" role="group" aria-label="Service">
+    <span class="bar-title" id="bar-title">Siddur</span>
+    <div class="seg" role="group" aria-label="Service" id="seg">
       <button type="button" data-service="shacharit">Shacharit</button>
       <button type="button" data-service="mincha">Mincha</button>
       <button type="button" data-service="maariv">Maariv</button>
@@ -18,69 +18,107 @@
 </header>
 
 <main class="wrap">
-  <section class="day" aria-label="Today">
-    <p class="heb-date" id="heb-date" lang="he" dir="rtl"></p>
-    <p class="civil" id="civil-date"></p>
-    <div class="chips" id="day-chips"></div>
-    <div class="day-row">
-      <label class="date-pick" for="date-input">Date <input type="date" id="date-input"></label>
-      <button type="button" class="btn" id="today-btn">Today</button>
-      <button type="button" class="btn" id="jump-mourner">Mourner's corner</button>
+  <!-- Pray -->
+  <section class="view" id="view-pray" aria-label="Pray">
+    <div class="hero">
+      <h1 class="large-title" id="service-title"></h1>
+      <p class="heb-date" id="heb-date" lang="he" dir="rtl"></p>
+      <p class="civil" id="civil-date"></p>
+      <div class="chips" id="day-chips"></div>
+      <div class="date-row">
+        <label class="date-field" for="date-input"><span>Date</span><input type="date" id="date-input"></label>
+        <button type="button" class="btn-tinted" id="today-btn">Today</button>
+      </div>
     </div>
-    <div class="today-box">
-      <p class="eyebrow">Set for this service</p>
+    <div class="summary">
+      <p class="list-header">Included Today</p>
       <ul class="today-notes" id="today-notes"></ul>
     </div>
+    <nav class="toc" id="toc" aria-label="Jump to section"></nav>
+    <div id="service" class="service"></div>
+    <footer class="foot">
+      <p>Text: <i>Siddur Ashkenaz</i>, the Metsudah Siddur (1981), with the translation based on the Metsudah linear siddur by Avrohom Davis. Both CC-BY, via Sefaria. Psalms 16 and 49: Miqra according to the Masorah (CC-BY-SA), with the JPS 1917 translation (public domain).</p>
+      <p>The calendar follows Ashkenazi custom. Where your community’s practice differs, follow your community and your rabbi.</p>
+    </footer>
   </section>
 
-  <details class="panel" id="settings">
-    <summary>Settings</summary>
-    <div class="opts">
-      <label class="opt"><input type="checkbox" id="opt-mourner"><span><b>I'm saying Kaddish</b><small>Opens Mourner's Kaddish wherever it comes up</small></span></label>
-      <label class="opt"><input type="checkbox" id="opt-minyan"><span><b>Praying with a minyan</b><small>Off hides Kaddish, Barchu, Kedushah and Torah reading</small></span></label>
-      <label class="opt"><input type="checkbox" id="opt-shiva"><span><b>Shiva house</b><small>No Tachanun, adds Psalm 49 and Kaddish</small></span></label>
-      <label class="opt"><input type="checkbox" id="opt-translit"><span><b>Kaddish transliteration</b><small>English letters under Mourner's Kaddish</small></span></label>
-      <label class="opt"><input type="checkbox" id="opt-israel"><span><b>In Israel</b><small>Festival days and the rain prayer follow Israel</small></span></label>
-      <label class="opt"><input type="checkbox" id="opt-sayTal"><span><b>Say morid hatal in summer</b><small>Standard in Israel; most Ashkenazim abroad skip it</small></span></label>
-      <label class="opt"><input type="checkbox" id="opt-female"><span><b>Women's wording</b><small>She'asani kirtzono in the morning blessings</small></span></label>
-      <label class="opt"><input type="checkbox" id="opt-english"><span><b>English translation</b><small>Shown under each prayer where available</small></span></label>
-      <label class="opt"><input type="checkbox" id="opt-notes"><span><b>Halachic notes</b><small>The siddur's small-print guidance in Hebrew</small></span></label>
-      <label class="opt size"><span><b>Hebrew text size</b></span><input type="range" id="opt-size" min="1" max="2.2" step="0.05"></label>
-    </div>
-  </details>
+  <!-- Mourners -->
+  <section class="view" id="view-mourners" aria-label="Mourners" hidden>
+    <h1 class="large-title">Mourners</h1>
+    <p class="intro">Turn on <b>Saying Kaddish</b> in Settings and every Mourner’s Kaddish opens with transliteration. In a shiva house, also turn on <b>Shiva House</b>.</p>
 
-  <details class="panel mourner" id="mourner">
-    <summary>Mourner's corner</summary>
-    <div id="mourner-body" class="mourner-body">
-      <p>Turn on <b>I'm saying Kaddish</b> in Settings and every Mourner's Kaddish in the service opens with transliteration. In a shiva house, turn on <b>Shiva house</b>.</p>
-      <h3>El Malei Rachamim</h3>
-      <div class="form-row">
-        <label for="em-name">Name (Hebrew)<input id="em-name" type="text" dir="rtl" autocomplete="off" placeholder="שם"></label>
-        <label for="em-parent">Father's name<input id="em-parent" type="text" dir="rtl" autocomplete="off" placeholder="שם האב"></label>
-        <label class="check" for="em-female"><input id="em-female" type="checkbox"> For a woman</label>
+    <p class="list-header">El Malei Rachamim</p>
+    <div class="group-box">
+      <div class="fields">
+        <label class="field" for="em-name"><span>Name (Hebrew)</span><input id="em-name" type="text" dir="rtl" autocomplete="off" placeholder="שם"></label>
+        <label class="field" for="em-parent"><span>Father’s Name</span><input id="em-parent" type="text" dir="rtl" autocomplete="off" placeholder="שם האב"></label>
       </div>
-      <p class="he prayer" id="el-malei" lang="he" dir="rtl"></p>
-      <h3>Comforting mourners</h3>
-      <p class="he prayer" lang="he" dir="rtl">הַמָּקוֹם יְנַחֵם אֶתְכֶם בְּתוֹךְ שְׁאָר אֲבֵלֵי צִיּוֹן וִירוּשָׁלָיִם</p>
-      <p class="sub">"May the Omnipresent comfort you among the other mourners of Zion and Jerusalem." Say <i>otcha</i> to one man, <i>otach</i> to one woman.</p>
-      <h3>Yahrzeit date</h3>
-      <div class="form-row">
-        <label for="yz-date">Date of passing<input id="yz-date" type="date"></label>
-        <label class="check" for="yz-sunset"><input id="yz-sunset" type="checkbox"> After sunset</label>
-      </div>
-      <p id="yz-out" class="sub"></p>
-      <p class="sub">Saved on this device only.</p>
+      <label class="row switch-row" for="em-female"><span class="row-text"><span class="row-label">For a Woman</span></span><input id="em-female" type="checkbox" role="switch"></label>
+      <p class="prayer" id="el-malei" lang="he" dir="rtl"></p>
     </div>
-  </details>
 
-  <nav class="toc" id="toc" aria-label="Jump to section"></nav>
-  <h1 class="service-title" id="service-title"></h1>
-  <div id="service"></div>
+    <p class="list-header">Comforting Mourners</p>
+    <div class="group-box">
+      <p class="prayer" lang="he" dir="rtl">הַמָּקוֹם יְנַחֵם אֶתְכֶם בְּתוֹךְ שְׁאָר אֲבֵלֵי צִיּוֹן וִירוּשָׁלָיִם</p>
+      <p class="caption">“May the Omnipresent comfort you among the other mourners of Zion and Jerusalem.” To one man say <i>otcha</i>; to one woman, <i>otach</i>.</p>
+    </div>
 
-  <footer class="foot">
-    <p>Text: <i>Siddur Ashkenaz</i>, the Metsudah Siddur (1981), with the translation based on the Metsudah linear siddur by Avrohom Davis. Both CC-BY, via Sefaria. Psalms 16 and 49: Miqra according to the Masorah (CC-BY-SA), with the JPS 1917 translation (public domain).</p>
-    <p>The calendar follows Ashkenazi custom. When your community's practice differs, follow your community and your rabbi.</p>
-  </footer>
+    <p class="list-header">Yahrzeit</p>
+    <div class="group-box">
+      <div class="fields">
+        <label class="field" for="yz-date"><span>Date of Passing</span><input id="yz-date" type="date"></label>
+      </div>
+      <label class="row switch-row" for="yz-sunset"><span class="row-text"><span class="row-label">After Sunset</span><span class="row-sub">The Hebrew date starts at nightfall</span></span><input id="yz-sunset" type="checkbox" role="switch"></label>
+      <p id="yz-out" class="result"></p>
+    </div>
+    <p class="list-footer">Saved on this device only.</p>
+  </section>
+
+  <!-- Settings -->
+  <section class="view" id="view-settings" aria-label="Settings" hidden>
+    <h1 class="large-title">Settings</h1>
+
+    <p class="list-header">Kaddish and Mourning</p>
+    <div class="group-box list">
+      <label class="row switch-row" for="opt-mourner"><span class="row-text"><span class="row-label">Saying Kaddish</span><span class="row-sub">Opens Mourner’s Kaddish wherever it comes up</span></span><input type="checkbox" role="switch" id="opt-mourner"></label>
+      <label class="row switch-row" for="opt-shiva"><span class="row-text"><span class="row-label">Shiva House</span><span class="row-sub">Skips Tachanun, adds Psalm 49 and Kaddish</span></span><input type="checkbox" role="switch" id="opt-shiva"></label>
+      <label class="row switch-row" for="opt-translit"><span class="row-text"><span class="row-label">Kaddish Transliteration</span><span class="row-sub">English letters under Mourner’s Kaddish</span></span><input type="checkbox" role="switch" id="opt-translit"></label>
+    </div>
+
+    <p class="list-header">Service</p>
+    <div class="group-box list">
+      <label class="row switch-row" for="opt-minyan"><span class="row-text"><span class="row-label">Praying With a Minyan</span><span class="row-sub">Shows Kaddish, Barchu, Kedushah and Torah reading</span></span><input type="checkbox" role="switch" id="opt-minyan"></label>
+      <label class="row switch-row" for="opt-israel"><span class="row-text"><span class="row-label">In Israel</span><span class="row-sub">Festival days and the rain prayer follow Israel</span></span><input type="checkbox" role="switch" id="opt-israel"></label>
+      <label class="row switch-row" for="opt-sayTal"><span class="row-text"><span class="row-label">Morid Hatal in Summer</span><span class="row-sub">Standard in Israel; most Ashkenazim abroad skip it</span></span><input type="checkbox" role="switch" id="opt-sayTal"></label>
+      <label class="row switch-row" for="opt-female"><span class="row-text"><span class="row-label">Women’s Wording</span><span class="row-sub">She’asani kirtzono in the morning blessings</span></span><input type="checkbox" role="switch" id="opt-female"></label>
+    </div>
+
+    <p class="list-header">Display</p>
+    <div class="group-box list">
+      <label class="row switch-row" for="opt-english"><span class="row-text"><span class="row-label">English Translation</span><span class="row-sub">Under each prayer where available</span></span><input type="checkbox" role="switch" id="opt-english"></label>
+      <label class="row switch-row" for="opt-notes"><span class="row-text"><span class="row-label">Halachic Notes</span><span class="row-sub">The siddur’s small-print guidance, in Hebrew</span></span><input type="checkbox" role="switch" id="opt-notes"></label>
+      <div class="row slider-row">
+        <label for="opt-size" class="row-label">Hebrew Text Size</label>
+        <div class="slider"><span class="a-small" aria-hidden="true">א</span><input type="range" id="opt-size" min="1" max="2.2" step="0.05"><span class="a-large" aria-hidden="true">א</span></div>
+        <p class="preview" lang="he" dir="rtl">בָּרוּךְ אַתָּה יְהֹוָה</p>
+      </div>
+    </div>
+  </section>
 </main>
+
+<nav class="tabbar" aria-label="Sections">
+  <button type="button" data-tab="pray" aria-current="page">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/></svg>
+    <span>Pray</span>
+  </button>
+  <button type="button" data-tab="mourners">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c1.6 2 3 3.6 3 5.6A3 3 0 0 1 12 11.5a3 3 0 0 1-3-2.9C9 6.6 10.4 5 12 3z"/><rect x="9" y="13" width="6" height="8" rx="1"/></svg>
+    <span>Mourners</span>
+  </button>
+  <button type="button" data-tab="settings">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-9"/><path d="M14 17H4"/><circle cx="7" cy="7" r="3"/><circle cx="17" cy="17" r="3"/></svg>
+    <span>Settings</span>
+  </button>
+</nav>
 <script>/*DATA*/</script>
 <script>/*JS*/</script>
