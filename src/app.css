@@ -1,11 +1,12 @@
 /* Layout: iOS-style reading app. Frosted top bar with the service switch, large title,
    prayers set edge to edge in a classic siddur face, frosted tab bar at the bottom. */
 :root {
+  /* Light (default tokens) */
   --bg: #ffffff;                       /* reading surface */
   --bg-grouped: rgb(242 242 247);      /* settings / mourner lists */
   --bg-cell: #ffffff;
   --label: #000000;
-  --label-2: rgb(60 60 67 / 0.64);
+  --label-2: rgb(60 60 67 / 0.76);
   --label-3: rgb(60 60 67 / 0.36);
   --fill: rgb(120 120 128 / 0.16);
   --fill-2: rgb(118 118 128 / 0.12);
@@ -21,14 +22,40 @@
   --glass-line: rgb(0 0 0 / 0.08);
   --ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --he: "Frank Ruhl Libre", "Times New Roman", "David", serif;
+  --book: Georgia, "Iowan Old Style", "Times New Roman", serif; /* English text, like a book */
   --he-size: 1.25rem;
+  --he-lh: 1.8;                        /* Line Spacing: 1.55 / 1.8 / 2.1 */
+  --page-margin: 16px;                 /* Margins: 16 / 28 / 44 */
   --ease: cubic-bezier(0.32, 0.72, 0, 1);
   --tabbar-h: 56px;
+  color-scheme: light;
 }
+/* Paper: warm sepia, like an e-reader */
+:root[data-reading="paper"] {
+  --bg: #f4ecd8; --bg-grouped: #ebe2cb; --bg-cell: #faf4e4;
+  --label: #3b2f1e; --label-2: rgb(59 47 30 / 0.74); --label-3: rgb(59 47 30 / 0.40);
+  --fill: rgb(91 70 40 / 0.16); --fill-2: rgb(91 70 40 / 0.11); --separator: rgb(91 70 40 / 0.28);
+  --accent: #2a5d84; --accent-tint: rgb(42 93 132 / 0.13);
+  --insert: #7a4b00; --insert-bg: rgb(200 150 30 / 0.22);
+  --mourn: #5b4a9a; --mourn-bg: rgb(91 74 154 / 0.12);
+  --switch-on: #5f8f4a; --glass: rgb(244 236 216 / 0.82); --glass-line: rgb(91 70 40 / 0.15);
+  color-scheme: light;
+}
+:root[data-reading="dark"] {
+  --bg: #000000; --bg-grouped: #000000; --bg-cell: rgb(28 28 30);
+  --label: #e9e6df; --label-2: rgb(235 235 245 / 0.64); --label-3: rgb(235 235 245 / 0.34);
+  --fill: rgb(120 120 128 / 0.36); --fill-2: rgb(118 118 128 / 0.24); --separator: rgb(84 84 88 / 0.6);
+  --accent: rgb(64 156 255); --accent-tint: rgb(64 156 255 / 0.18);
+  --insert: rgb(255 214 10); --insert-bg: rgb(255 214 10 / 0.14);
+  --mourn: rgb(170 160 255); --mourn-bg: rgb(109 124 255 / 0.18);
+  --switch-on: rgb(48 209 88); --glass: rgb(22 22 24 / 0.76); --glass-line: rgb(255 255 255 / 0.1);
+  color-scheme: dark;
+}
+/* Fallback before theme.js has run: follow the system so there is no flash */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-reading]) {
     --bg: #000000; --bg-grouped: #000000; --bg-cell: rgb(28 28 30);
-    --label: #ffffff; --label-2: rgb(235 235 245 / 0.64); --label-3: rgb(235 235 245 / 0.34);
+    --label: #e9e6df; --label-2: rgb(235 235 245 / 0.64); --label-3: rgb(235 235 245 / 0.34);
     --fill: rgb(120 120 128 / 0.36); --fill-2: rgb(118 118 128 / 0.24); --separator: rgb(84 84 88 / 0.6);
     --accent: rgb(64 156 255); --accent-tint: rgb(64 156 255 / 0.18);
     --insert: rgb(255 214 10); --insert-bg: rgb(255 214 10 / 0.14);
@@ -37,19 +64,13 @@
     color-scheme: dark;
   }
 }
-:root[data-theme="dark"] {
-  --bg: #000000; --bg-grouped: #000000; --bg-cell: rgb(28 28 30);
-  --label: #ffffff; --label-2: rgb(235 235 245 / 0.64); --label-3: rgb(235 235 245 / 0.34);
-  --fill: rgb(120 120 128 / 0.36); --fill-2: rgb(118 118 128 / 0.24); --separator: rgb(84 84 88 / 0.6);
-  --accent: rgb(64 156 255); --accent-tint: rgb(64 156 255 / 0.18);
-  --insert: rgb(255 214 10); --insert-bg: rgb(255 214 10 / 0.14);
-  --mourn: rgb(170 160 255); --mourn-bg: rgb(109 124 255 / 0.18);
-  --switch-on: rgb(48 209 88); --glass: rgb(22 22 24 / 0.76); --glass-line: rgb(255 255 255 / 0.1);
-  color-scheme: dark;
-}
 @media (prefers-contrast: more) {
-  :root { --label-2: rgb(60 60 67 / 0.85); --separator: rgb(60 60 67 / 0.5); --insert: rgb(130 70 0); }
-  :root[data-theme="dark"], :root:not([data-theme="light"]) { --label-2: rgb(235 235 245 / 0.85); }
+  :root { --label-2: rgb(60 60 67 / 0.88); --separator: rgb(60 60 67 / 0.5); --insert: rgb(130 70 0); }
+  :root[data-reading="paper"] { --label-2: rgb(59 47 30 / 0.9); --separator: rgb(91 70 40 / 0.55); --insert: #6b4000; }
+  :root[data-reading="dark"] { --label-2: rgb(235 235 245 / 0.85); --separator: rgb(84 84 88 / 0.9); --insert: rgb(255 214 10); }
+}
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root:not([data-reading]) { --label-2: rgb(235 235 245 / 0.85); --separator: rgb(84 84 88 / 0.9); --insert: rgb(255 214 10); }
 }
 
 * { box-sizing: border-box; }
@@ -63,16 +84,17 @@ button, input { font: inherit; color: inherit; }
 
 /* Top bar (control layer) */
 .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--glass); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); border-bottom: 0.5px solid var(--glass-line); }
-.bar-inner { max-width: 720px; margin: 0 auto; min-height: 52px; display: flex; align-items: center; gap: 12px; padding-block: 6px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.bar-inner { max-width: 720px; margin: 0 auto; min-height: 52px; display: flex; align-items: center; gap: 8px; padding-block: 6px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .bar-title { font-weight: 600; font-size: 1.0625rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .seg { margin-left: auto; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--fill-2); border-radius: 9px; padding: 2px; flex: none; }
 .seg[hidden] { display: none !important; }
-.seg button { border: 0; background: transparent; min-height: 32px; padding: 4px 12px; border-radius: 7px; font-size: 0.8125rem; font-weight: 500; cursor: pointer; white-space: nowrap; position: relative; }
+.seg button { border: 0; background: transparent; min-height: 32px; padding: 4px 10px; border-radius: 7px; font-size: 0.8125rem; font-weight: 500; cursor: pointer; white-space: nowrap; position: relative; }
 .seg button::after { content: ""; position: absolute; inset: -6px -2px; } /* 44px hit area */
 .seg button[aria-pressed="true"] { background: var(--bg-cell); font-weight: 600; box-shadow: 0 3px 8px rgb(0 0 0 / 0.12), 0 1px 1px rgb(0 0 0 / 0.04); }
 .seg button:active { opacity: 0.6; }
 
-.wrap { max-width: 720px; margin: 0 auto; padding-block: 8px calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 32px); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { --pad: var(--page-margin); max-width: 720px; margin: 0 auto; padding-block: 8px calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 32px); padding-left: max(var(--pad), env(safe-area-inset-left, 0px)); padding-right: max(var(--pad), env(safe-area-inset-right, 0px)); }
+body.grouped .wrap { --pad: 16px; } /* the margin setting is for the reading column only */
 
 /* Titles and day header */
 .large-title { font-size: 2.125rem; line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; margin: 8px 0 4px; text-wrap: balance; }
@@ -98,7 +120,7 @@ button, input { font: inherit; color: inherit; }
 .today-notes li { font-size: 0.9375rem; background: var(--fill-2); border-radius: 8px; padding: 4px 10px; }
 
 /* Section index */
-.toc { display: flex; gap: 8px; overflow-x: auto; margin: 20px -16px 0; padding: 0 16px 4px; scrollbar-width: none; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 52px); z-index: 4; background: var(--bg); padding-block: 8px; border-bottom: 0.5px solid var(--separator); }
+.toc { display: flex; gap: 8px; overflow-x: auto; margin: 20px calc(-1 * var(--pad)) 0; padding: 0 var(--pad) 4px; scrollbar-width: none; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 52px); z-index: 4; background: var(--bg); padding-block: 8px; border-bottom: 0.5px solid var(--separator); }
 .toc::-webkit-scrollbar { display: none; }
 .toc button { flex: none; border: 0; background: var(--fill-2); color: var(--accent); border-radius: 999px; min-height: 36px; padding: 0 14px; font-size: 0.9375rem; font-weight: 500; cursor: pointer; white-space: nowrap; position: relative; }
 .toc button::after { content: ""; position: absolute; inset: -4px 0; }
@@ -119,7 +141,7 @@ button, input { font: inherit; color: inherit; }
 .sec.muted > summary .sec-title { color: var(--label-2); }
 .sec-note { margin: 0 0 8px; font-size: 0.9375rem; color: var(--label-2); }
 
-.he { font-family: var(--he); font-size: var(--he-size); line-height: 1.8; padding: 0 0 16px; text-align: right; }
+.he { font-family: var(--he); font-size: var(--he-size); line-height: var(--he-lh); padding: 0 0 16px; text-align: right; }
 .he p { margin: 0 0 0.6em; }
 .he b { font-weight: 700; }
 .he small, .he .hint { font-family: var(--ui); font-size: max(0.6875rem, 0.62em); color: var(--label-2); }
@@ -132,9 +154,9 @@ button, input { font: inherit; color: inherit; }
 .he p.insert { background: var(--insert-bg); border-radius: 12px; padding: 8px 12px; margin-inline: -12px; }
 .tag { display: inline-block; font-family: var(--ui); font-size: 0.6875rem; font-weight: 700; color: var(--insert); letter-spacing: 0.03em; text-transform: uppercase; margin-inline-end: 8px; vertical-align: 0.25em; direction: ltr; }
 mark.today { background: var(--insert-bg); color: inherit; border-radius: 4px; padding: 0 3px; }
-.translit { margin: 0 0 16px; padding: 12px 14px; background: var(--mourn-bg); border-radius: 12px; font-size: 1rem; line-height: 1.55; }
+.translit { font-family: var(--book); margin: 0 0 16px; padding: 12px 14px; background: var(--mourn-bg); border-radius: 12px; font-size: 1rem; line-height: 1.55; }
 .translit p { margin: 0 0 0.4em; }
-.en { margin: 0 0 16px; padding-top: 10px; border-top: 0.5px solid var(--separator); font-size: 1rem; line-height: 1.55; color: var(--label-2); }
+.en { font-family: var(--book); margin: 0 0 16px; padding-top: 10px; border-top: 0.5px solid var(--separator); font-size: 1rem; line-height: 1.55; color: var(--label-2); }
 .en p { margin: 0 0 0.6em; }
 .en small { font-size: 0.85em; }
 .callout { background: var(--mourn-bg); border-radius: 12px; padding: 12px 14px; margin: 12px 0; font-size: 1rem; }
@@ -173,11 +195,22 @@ input[role="switch"]:checked::before { transform: translateX(20px); }
 .result { margin: 0; padding: 4px 16px 16px; font-size: 0.9375rem; color: var(--label); }
 
 .row-warn { color: var(--insert); }
+.buttons-row { flex-wrap: wrap; gap: 8px; }
+.btn-plain { border: 0; background: transparent; color: var(--accent); min-height: 44px; padding: 0 12px; font-weight: 500; cursor: pointer; border-radius: 999px; }
+.btn-plain:active { opacity: 0.6; }
+.btn-tinted:disabled, .btn-plain:disabled { opacity: 0.4; cursor: default; }
 .strength-row { flex-wrap: wrap; }
 .strength-row .seg { margin-left: auto; }
 
+/* No double-tap zoom delay on taps. */
+html { touch-action: manipulation; }
+
+/* In the Android app, the bars are solid instead of frosted: backdrop blur is the slowest effect on cheap phone GPUs
+   and it redraws on every scroll frame. */
+.native-app .bar, .native-app .tabbar, .native-app .page-toast, .native-app .sheet { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--bg); }
+
 /* Page-turn feedback (control layer) */
-.page-toast { position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 16px); transform: translateX(-50%); z-index: 7; background: var(--glass); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); border: 0.5px solid var(--glass-line); border-radius: 999px; padding: 8px 16px; font-size: 0.9375rem; font-weight: 600; box-shadow: 0 8px 24px rgb(0 0 0 / 0.12); pointer-events: none; }
+.page-toast { position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 40px); transform: translateX(-50%); z-index: 9; background: var(--glass); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); border: 0.5px solid var(--glass-line); border-radius: 999px; padding: 8px 16px; font-size: 0.9375rem; font-weight: 600; box-shadow: 0 8px 24px rgb(0 0 0 / 0.12); pointer-events: none; }
 .page-toast.show { animation: toast 1.1s var(--ease) forwards; }
 @keyframes toast { 0% { opacity: 0; transform: translate(-50%, 8px); } 15%, 75% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, 0); } }
 
@@ -192,4 +225,52 @@ input[role="switch"]:checked::before { transform: translateX(20px); }
 @media (min-width: 600px) {
   .he { text-align: justify; }
 }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+
+
+/* Theme row (Settings) */
+.theme-row { flex-wrap: wrap; }
+.theme-row .seg { margin-left: auto; }
+
+/* Aa button (top bar, Pray tab only) */
+.aa-btn { flex: none; width: 44px; height: 44px; border: 0; background: transparent; color: var(--accent); border-radius: 12px; font-family: var(--book); font-weight: 700; font-size: 1.25rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.aa-btn small { font-size: 0.8125rem; font-weight: 700; }
+.aa-btn:active { opacity: 0.6; }
+.bar-inner .seg + .aa-btn { margin-left: -4px; }
+
+/* Appearance sheet (control layer) */
+.sheet-backdrop { position: fixed; inset: 0; z-index: 7; background: rgb(0 0 0 / 0.18); }
+.sheet { position: fixed; left: 0; right: 0; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); z-index: 8; max-width: 560px; margin: 0 auto; max-height: calc(100vh - var(--tabbar-h) - env(safe-area-inset-bottom, 0px) - 24px); max-height: calc(100dvh - var(--tabbar-h) - env(safe-area-inset-bottom, 0px) - 24px); overflow-y: auto; overscroll-behavior: contain; background: var(--glass); backdrop-filter: saturate(1.8) blur(24px); -webkit-backdrop-filter: saturate(1.8) blur(24px); border: 0.5px solid var(--glass-line); border-bottom: 0; border-radius: 20px 20px 0 0; box-shadow: 0 -8px 32px rgb(0 0 0 / 0.14); padding: 8px max(16px, env(safe-area-inset-right, 0px)) 12px max(16px, env(safe-area-inset-left, 0px)); }
+.sheet:not([hidden]) { animation: sheet-up 280ms var(--ease); }
+@keyframes sheet-up { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+.sheet-title { margin: 0; font-size: 1.0625rem; font-weight: 600; }
+.sheet-label { margin: 10px 0 6px; font-size: 0.8125rem; color: var(--label-2); text-transform: uppercase; letter-spacing: 0.02em; }
+.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.swatch { border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: var(--label); font-size: 0.8125rem; min-height: 44px; border-radius: 12px; }
+.swatch .sw { position: relative; isolation: isolate; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--book); font-weight: 700; font-size: 1.1875rem; border: 1.5px solid var(--separator); }
+.swatch[aria-pressed="true"] .sw { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4.5px var(--accent); }
+.swatch[aria-pressed="true"] .sw-name { font-weight: 700; }
+.sw-light { background: #ffffff; color: #000000; }
+.sw-paper { background: #f4ecd8; color: #3b2f1e; }
+.sw-dark { background: #000000; color: #e9e6df; }
+.sw-auto { background: linear-gradient(90deg, #ffffff 50%, #000000 50%); color: #ffffff; mix-blend-mode: normal; }
+.sw-auto span { mix-blend-mode: difference; color: #ffffff; }
+.swatch:active .sw { transform: scale(0.96); }
+.size-row { display: flex; align-items: center; gap: 8px; }
+.size-row input[type="range"] { flex: 1; min-width: 0; accent-color: var(--accent); min-height: 44px; }
+.size-btn { flex: none; width: 44px; height: 44px; border: 0; border-radius: 12px; background: var(--fill-2); color: var(--label); font-family: var(--book); font-weight: 700; cursor: pointer; }
+.size-btn.sm { font-size: 0.9375rem; }
+.size-btn.lg { font-size: 1.375rem; }
+.size-btn:active { opacity: 0.6; }
+.seg.wide { display: grid; grid-auto-flow: column; margin-left: 0; width: 100%; }
+.seg.wide button { min-height: 44px; font-size: 0.9375rem; }
+.seg.wide button::after { inset: 0; }
+
+/* Reading progress (Pray tab) */
+.read-progress { position: fixed; left: 0; right: 0; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); z-index: 4; text-align: center; padding: 3px 16px; font-size: 0.75rem; line-height: 1.3; color: var(--label-2); background: var(--bg); border-top: 0.5px solid var(--separator); pointer-events: none; font-variant-numeric: tabular-nums; }
+
+/* Reading mode: the controls fade away, tap the middle to bring them back */
+.bar, .tabbar, .toc, .read-progress { transition: opacity 160ms ease, visibility 0s linear 0s; }
+body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.reading-mode .read-progress { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 160ms ease, visibility 0s linear 160ms; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }

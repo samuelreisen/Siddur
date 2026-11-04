@@ -45,29 +45,7 @@ function onMotion(e) {
   }
 }
 
-function turnPage(dir) {
-  const covered = document.getElementById('bar').offsetHeight + document.getElementById('toc').offsetHeight;
-  const step = Math.max(200, window.innerHeight - covered - 48); // keep a little overlap so no line is skipped
-  const maxY = document.documentElement.scrollHeight - window.innerHeight;
-  if (dir < 0 && window.scrollY <= 1) return pageToast('Already at the top');
-  if (dir > 0 && window.scrollY >= maxY - 1) return pageToast('End of the service');
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.scrollBy({ top: dir * step, behavior: reduce ? 'auto' : 'smooth' });
-  pageToast(dir > 0 ? 'Next page' : 'Previous page');
-  try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) { /* not available */ }
-}
-
-let toastTimer = 0;
-function pageToast(text) {
-  const el = document.getElementById('page-toast');
-  el.textContent = text;
-  el.hidden = false;
-  el.classList.remove('show');
-  void el.offsetWidth; // restart the fade
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.hidden = true; el.classList.remove('show'); }, 1100);
-}
+// turnPage() and pageToast() live in reader.js, so tilt and tap zones turn pages the same way.
 
 function startTilt() {
   if (!settings.tilt || tilt.listening) return;

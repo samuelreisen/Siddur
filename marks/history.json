@@ -10,5 +10,29 @@
     "bytes": 1849958,
     "minShell": "1.0.0",
     "handoff": true
+  },
+  {
+    "mark": 2,
+    "name": "Mk II",
+    "title": "In-app updates",
+    "notes": "The Android app can update itself from .oleh files on GitHub, only when you tap. Includes tilt to turn pages.",
+    "created": "2026-11-04T09:00:11.141Z",
+    "file": "marks/out/Siddur-MkII.oleh",
+    "sha256": "9a331cca023a4fb21c3fadb2161f5ad2a8aaa8ee51cd7de6b1413919e7394f66",
+    "bytes": 1867740,
+    "minShell": "1.0.0",
+    "handoff": true
+  },
+  {
+    "mark": 3,
+    "name": "Mk III",
+    "title": "Kindle-style reading",
+    "notes": "Light, Paper, Dark and Auto themes, Aa sheet, page progress, tap zones, Android system bars that follow the theme.",
+    "created": "2026-11-04T16:33:20.629Z",
+    "file": "marks/out/Siddur-MkIII.oleh",
+    "sha256": "86430bac63f6abd55debfc9ab2a0c576d93ee232acab4c11299a1db26f926462",
+    "bytes": 1886670,
+    "minShell": "1.0.0",
+    "handoff": true
   }
 ]

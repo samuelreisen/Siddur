@@ -1,7 +1,7 @@
 {
-  "mark": 1,
-  "name": "Mk I",
-  "title": "Smart siddur, first mark",
-  "notes": "Smart Ashkenaz siddur web app, mourner tools, HIG design, build pipeline and handoff system.",
-  "created": "2026-11-04T06:42:01.939Z"
+  "mark": 3,
+  "name": "Mk III",
+  "title": "Kindle-style reading",
+  "notes": "Light, Paper, Dark and Auto themes, Aa sheet, page progress, tap zones, Android system bars that follow the theme.",
+  "created": "2026-11-04T16:33:20.629Z"
 }

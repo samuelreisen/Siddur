@@ -4,6 +4,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
+<script>
+// Paint the saved theme before the page body, so Light, Paper and Dark never flash the wrong colors. Auto is resolved later by theme.js.
+try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
+</script>
 <style>/*CSS*/</style>
 
 <header class="bar" id="bar">
@@ -14,6 +18,7 @@
       <button type="button" data-service="mincha">Mincha</button>
       <button type="button" data-service="maariv">Maariv</button>
     </div>
+    <button type="button" class="aa-btn" id="aa-btn" aria-label="Appearance" aria-haspopup="dialog" aria-expanded="false" aria-controls="appearance-sheet"><span aria-hidden="true">A<small>a</small></span></button>
   </div>
 </header>
 
@@ -95,9 +100,19 @@
 
     <p class="list-header">Display</p>
     <div class="group-box list">
+      <div class="row theme-row">
+        <span class="row-text"><span class="row-label" id="theme-label">Theme</span><span class="row-sub">Auto follows your device</span></span>
+        <div class="seg" role="group" aria-labelledby="theme-label" id="theme-seg">
+          <button type="button" id="set-theme-light" data-theme-mode="light">Light</button>
+          <button type="button" id="set-theme-paper" data-theme-mode="paper">Paper</button>
+          <button type="button" id="set-theme-dark" data-theme-mode="dark">Dark</button>
+          <button type="button" id="set-theme-auto" data-theme-mode="auto">Auto</button>
+        </div>
+      </div>
       <label class="row switch-row" for="opt-english"><span class="row-text"><span class="row-label">English Translation</span><span class="row-sub">Under each prayer where available</span></span><input type="checkbox" role="switch" id="opt-english"></label>
       <label class="row switch-row" for="opt-notes"><span class="row-text"><span class="row-label">Halachic Notes</span><span class="row-sub">The siddur’s small-print guidance, in Hebrew</span></span><input type="checkbox" role="switch" id="opt-notes"></label>
       <label class="row switch-row" for="opt-tilt"><span class="row-text"><span class="row-label">Tilt to Turn Pages</span><span class="row-sub">Flick the phone left for the next page, right to go back</span><span class="row-sub row-warn" id="tilt-status"></span></span><input type="checkbox" role="switch" id="opt-tilt"></label>
+      <label class="row switch-row" for="opt-tapTurn"><span class="row-text"><span class="row-label">Tap Screen Edges to Turn Pages</span><span class="row-sub">Left edge for next page, right edge to go back. Tap the middle to hide controls.</span></span><input type="checkbox" role="switch" id="opt-tapTurn"></label>
       <div class="row strength-row" id="tilt-strength-row" hidden>
         <span class="row-text"><span class="row-label">Flick Strength</span><span class="row-sub">Harder means fewer accidental turns</span></span>
         <div class="seg" role="group" aria-label="Flick strength">
@@ -112,8 +127,63 @@
         <p class="preview" lang="he" dir="rtl">בָּרוּךְ אַתָּה יְהֹוָה</p>
       </div>
     </div>
+
+    <div id="updates-group" hidden>
+      <p class="list-header">App Updates</p>
+      <div class="group-box list">
+        <div class="row"><span class="row-text"><span class="row-label">Installed Version</span><span class="row-sub" id="upd-current"></span></span></div>
+        <div class="row buttons-row">
+          <button type="button" class="btn-tinted" id="upd-check">Check for Updates</button>
+          <button type="button" class="btn-plain" id="upd-file">Install Update File…</button>
+        </div>
+        <div class="row" id="upd-result-row" hidden>
+          <span class="row-text"><span class="row-label" id="upd-result-title"></span><span class="row-sub" id="upd-result-sub"></span></span>
+          <button type="button" class="btn-tinted" id="upd-install" hidden>Install</button>
+        </div>
+      </div>
+      <p class="list-footer">Updates come from github.com/samuelreisen/Siddur. Nothing downloads until you tap.</p>
+
+      <p class="list-header">Versions on This Phone</p>
+      <div class="group-box list" id="upd-list"></div>
+      <p class="list-footer">The last 5 updates are kept, so you can switch back if one has a problem.</p>
+    </div>
   </section>
 </main>
+
+<div class="read-progress" id="read-progress" aria-hidden="true"></div>
+
+<div class="sheet-backdrop" id="sheet-backdrop" hidden></div>
+<div class="sheet" id="appearance-sheet" role="dialog" aria-modal="true" aria-label="Appearance" hidden>
+  <div class="sheet-head">
+    <h2 class="sheet-title">Appearance</h2>
+    <button type="button" class="btn-plain" id="sheet-done">Done</button>
+  </div>
+  <p class="sheet-label" id="sh-theme-label">Theme</p>
+  <div class="swatches" role="group" aria-labelledby="sh-theme-label">
+    <button type="button" class="swatch" id="sh-theme-light" data-theme-mode="light"><span class="sw sw-light" aria-hidden="true">Aa</span><span class="sw-name">Light</span></button>
+    <button type="button" class="swatch" id="sh-theme-paper" data-theme-mode="paper"><span class="sw sw-paper" aria-hidden="true">Aa</span><span class="sw-name">Paper</span></button>
+    <button type="button" class="swatch" id="sh-theme-dark" data-theme-mode="dark"><span class="sw sw-dark" aria-hidden="true">Aa</span><span class="sw-name">Dark</span></button>
+    <button type="button" class="swatch" id="sh-theme-auto" data-theme-mode="auto"><span class="sw sw-auto" aria-hidden="true"><span>Aa</span></span><span class="sw-name">Auto</span></button>
+  </div>
+  <p class="sheet-label" id="sh-size-label">Text Size</p>
+  <div class="size-row">
+    <button type="button" class="size-btn sm" id="sh-size-down" aria-label="Smaller Text">A-</button>
+    <input type="range" id="sh-size" min="1" max="2.2" step="0.05" aria-labelledby="sh-size-label">
+    <button type="button" class="size-btn lg" id="sh-size-up" aria-label="Larger Text">A+</button>
+  </div>
+  <p class="sheet-label" id="sh-lh-label">Line Spacing</p>
+  <div class="seg wide" role="group" aria-labelledby="sh-lh-label">
+    <button type="button" id="sh-lh-compact" data-lh="1.55">Compact</button>
+    <button type="button" id="sh-lh-normal" data-lh="1.8">Normal</button>
+    <button type="button" id="sh-lh-relaxed" data-lh="2.1">Relaxed</button>
+  </div>
+  <p class="sheet-label" id="sh-margin-label">Margins</p>
+  <div class="seg wide" role="group" aria-labelledby="sh-margin-label">
+    <button type="button" id="sh-margin-narrow" data-margin="narrow">Narrow</button>
+    <button type="button" id="sh-margin-medium" data-margin="medium">Medium</button>
+    <button type="button" id="sh-margin-wide" data-margin="wide">Wide</button>
+  </div>
+</div>
 
 <div class="page-toast" id="page-toast" role="status" aria-live="polite" hidden></div>
 
