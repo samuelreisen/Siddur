@@ -1,0 +1,456 @@
+Weekday, Shacharit, Preparatory Prayers, Modeh Ani
+Weekday, Shacharit, Preparatory Prayers, Netilat Yadayim
+Weekday, Shacharit, Preparatory Prayers, Asher Yatzar
+Weekday, Shacharit, Preparatory Prayers, Elokai Neshama
+Weekday, Shacharit, Preparatory Prayers, Tzitzit
+Weekday, Shacharit, Preparatory Prayers, Torah Blessings
+Weekday, Shacharit, Preparatory Prayers, Torah Study
+Weekday, Shacharit, Preparatory Prayers, Tallit
+Weekday, Shacharit, Preparatory Prayers, Tefillin
+Weekday, Shacharit, Preparatory Prayers, Ma Tovu
+Weekday, Shacharit, Preparatory Prayers, Adon Olam
+Weekday, Shacharit, Preparatory Prayers, Yigdal
+Weekday, Shacharit, Preparatory Prayers, Morning Blessings
+Weekday, Shacharit, Preparatory Prayers, Akedah
+Weekday, Shacharit, Preparatory Prayers, Sovereignty of Heaven
+Weekday, Shacharit, Preparatory Prayers, Korbanot, Kiyor
+Weekday, Shacharit, Preparatory Prayers, Korbanot, Terumat HaDeshen
+Weekday, Shacharit, Preparatory Prayers, Korbanot, Korban HaTamid
+Weekday, Shacharit, Preparatory Prayers, Korbanot, Ketoret
+Weekday, Shacharit, Preparatory Prayers, Korbanot, Order of the Temple Service
+Weekday, Shacharit, Preparatory Prayers, Korbanot, Laws of Sacrifices
+Weekday, Shacharit, Preparatory Prayers, Korbanot, Baraita of Rabbi Yishmael
+Weekday, Shacharit, Preparatory Prayers, Korbanot, Kaddish DeRabbanan
+Weekday, Shacharit, Pesukei Dezimra, Introductory Psalm
+Weekday, Shacharit, Pesukei Dezimra, Mourner's Kaddish
+Weekday, Shacharit, Pesukei Dezimra, Barukh She'amar
+Weekday, Shacharit, Pesukei Dezimra, Hodu
+Weekday, Shacharit, Pesukei Dezimra, Mizmor Letoda
+Weekday, Shacharit, Pesukei Dezimra, Yehi Chevod
+Weekday, Shacharit, Pesukei Dezimra, Ashrei
+Weekday, Shacharit, Pesukei Dezimra, Psalm 146
+Weekday, Shacharit, Pesukei Dezimra, Psalm 147
+Weekday, Shacharit, Pesukei Dezimra, Psalm 148
+Weekday, Shacharit, Pesukei Dezimra, Psalm 149
+Weekday, Shacharit, Pesukei Dezimra, Psalm 150
+Weekday, Shacharit, Pesukei Dezimra, Closing Verses
+Weekday, Shacharit, Pesukei Dezimra, Vayevarech David
+Weekday, Shacharit, Pesukei Dezimra, Ata Hu
+Weekday, Shacharit, Pesukei Dezimra, Az Yashir
+Weekday, Shacharit, Pesukei Dezimra, Yishtabach
+Weekday, Shacharit, Pesukei Dezimra, Psalm 130
+Weekday, Shacharit, Pesukei Dezimra, Half Kaddish
+Weekday, Shacharit, Blessings of the Shema, Barchu
+Weekday, Shacharit, Blessings of the Shema, First Blessing before Shema
+Weekday, Shacharit, Blessings of the Shema, Second Blessing before Shema
+Weekday, Shacharit, Blessings of the Shema, Shema
+Weekday, Shacharit, Blessings of the Shema, Blessing after Shema
+Weekday, Shacharit, Amidah, Patriarchs
+Weekday, Shacharit, Amidah, Divine Might
+Weekday, Shacharit, Amidah, Holiness of God
+Weekday, Shacharit, Amidah, Kedushah
+Weekday, Shacharit, Amidah, Knowledge
+Weekday, Shacharit, Amidah, Repentance
+Weekday, Shacharit, Amidah, Forgiveness
+Weekday, Shacharit, Amidah, Redemption
+Weekday, Shacharit, Amidah, Healing
+Weekday, Shacharit, Amidah, Prosperity
+Weekday, Shacharit, Amidah, Gathering the Exiles
+Weekday, Shacharit, Amidah, Justice
+Weekday, Shacharit, Amidah, Against Enemies
+Weekday, Shacharit, Amidah, The Righteous
+Weekday, Shacharit, Amidah, Rebuilding Jerusalem
+Weekday, Shacharit, Amidah, Kingdom of David
+Weekday, Shacharit, Amidah, Response to Prayer
+Weekday, Shacharit, Amidah, Temple Service
+Weekday, Shacharit, Amidah, Thanksgiving
+Weekday, Shacharit, Amidah, Birkat Kohanim
+Weekday, Shacharit, Amidah, Peace
+Weekday, Shacharit, Amidah, Concluding Passage
+Weekday, Shacharit, Post Amidah, Vidui and 13 Middot
+Weekday, Shacharit, Post Amidah, Avinu Malkenu
+Weekday, Shacharit, Post Amidah, Tachanun, For Monday and Thursday
+Weekday, Shacharit, Post Amidah, Tachanun, Nefilat Apayim
+Weekday, Shacharit, Post Amidah, Tachanun, God of Israel
+Weekday, Shacharit, Post Amidah, Tachanun, Shomer Yisrael
+Weekday, Shacharit, Post Amidah, Tachanun, Half Kaddish
+Weekday, Shacharit, Torah Reading, Removing the Torah from Ark, El Erech Appayim
+Weekday, Shacharit, Torah Reading, Removing the Torah from Ark, Vayehi Binsoa
+Weekday, Shacharit, Torah Reading, Removing the Torah from Ark, Berich Shmei
+Weekday, Shacharit, Torah Reading, Removing the Torah from Ark, Lekha Hashem
+Weekday, Shacharit, Torah Reading, Removing the Torah from Ark, Av Harachamim
+Weekday, Shacharit, Torah Reading, Removing the Torah from Ark, Vetigaleh Veteraeh
+Weekday, Shacharit, Torah Reading, Reading from Sefer, Birkat HaTorah
+Weekday, Shacharit, Torah Reading, Reading from Sefer, Birkat Hagomel
+Weekday, Shacharit, Torah Reading, Reading from Sefer, Half Kaddish
+Weekday, Shacharit, Torah Reading, Reading from Sefer, Raising the Torah
+Weekday, Shacharit, Torah Reading, Reading from Sefer, Prayers for Welfare of the People
+Weekday, Shacharit, Torah Reading, Returning Sefer to Aron, Yehalelu
+Weekday, Shacharit, Torah Reading, Returning Sefer to Aron, LeDavid Mizmor
+Weekday, Shacharit, Torah Reading, Returning Sefer to Aron, Uvenucho Yomar
+Weekday, Shacharit, Concluding Prayers, Ashrei
+Weekday, Shacharit, Concluding Prayers, Lamenatze'ach
+Weekday, Shacharit, Concluding Prayers, Uva Letzion
+Weekday, Shacharit, Concluding Prayers, Kaddish Shalem
+Weekday, Shacharit, Concluding Prayers, Alenu
+Weekday, Shacharit, Concluding Prayers, Mourner's Kaddish
+Weekday, Shacharit, Concluding Prayers, Song of the Day
+Weekday, Shacharit, Concluding Prayers, Barchi Nafshi
+Weekday, Shacharit, Concluding Prayers, LeDavid
+Weekday, Shacharit, Concluding Prayers, Korbanot (Israel), Ein Kelohenu
+Weekday, Shacharit, Concluding Prayers, Korbanot (Israel), Pitum HaKetoret
+Weekday, Shacharit, Concluding Prayers, Korbanot (Israel), Mourner's Kaddish
+Weekday, Shacharit, Concluding Prayers, Korbanot (Israel), Barchu
+Weekday, Shacharit, Post Service, Six Remembrances
+Weekday, Shacharit, Post Service, Ten Commandments
+Weekday, Shacharit, Post Service, Thirteen Principles
+Weekday, Minchah, Ashrei
+Weekday, Minchah, Amida, Patriarchs
+Weekday, Minchah, Amida, Divine Might
+Weekday, Minchah, Amida, Holiness of God
+Weekday, Minchah, Amida, Keduasha
+Weekday, Minchah, Amida, Knowledge
+Weekday, Minchah, Amida, Repentance
+Weekday, Minchah, Amida, Forgiveness
+Weekday, Minchah, Amida, Redemption
+Weekday, Minchah, Amida, Healing
+Weekday, Minchah, Amida, Prosperity
+Weekday, Minchah, Amida, Gathering the Exiles
+Weekday, Minchah, Amida, Justice
+Weekday, Minchah, Amida, Against Enemies
+Weekday, Minchah, Amida, The Righteous
+Weekday, Minchah, Amida, Rebuilding Jerusalem
+Weekday, Minchah, Amida, Kingdom of David
+Weekday, Minchah, Amida, Response to Prayer
+Weekday, Minchah, Amida, Temple Service
+Weekday, Minchah, Amida, Thanksgiving
+Weekday, Minchah, Amida, Birkat Kohanim
+Weekday, Minchah, Amida, Peace
+Weekday, Minchah, Amida, Concluding Passage
+Weekday, Minchah, Post Amidah, Vidui and 13 Middot
+Weekday, Minchah, Post Amidah, Avinu Malkenu
+Weekday, Minchah, Post Amidah, Tachanun, Nefilat Appayim
+Weekday, Minchah, Post Amidah, Tachanun, Shomer Yisrael
+Weekday, Minchah, Post Amidah, Kaddish Shalem
+Weekday, Minchah, Concluding Prayers, Alenu
+Weekday, Minchah, Concluding Prayers, Mourner's Kaddish
+Weekday, Maariv, Vehu Rachum
+Weekday, Maariv, Barchu
+Weekday, Maariv, Blessings of the Shema, First Blessing before Shema
+Weekday, Maariv, Blessings of the Shema, Second Blessing before Shema
+Weekday, Maariv, Blessings of the Shema, Shema
+Weekday, Maariv, Blessings of the Shema, First Blessing after Shema
+Weekday, Maariv, Blessings of the Shema, Second Blessing after Shema
+Weekday, Maariv, Blessings of the Shema, Third Blessing after Shema
+Weekday, Maariv, Blessings of the Shema, Half Kaddish
+Weekday, Maariv, Amidah, Patriarchs
+Weekday, Maariv, Amidah, Divine Might
+Weekday, Maariv, Amidah, Holiness of God
+Weekday, Maariv, Amidah, Knowledge
+Weekday, Maariv, Amidah, Repentance
+Weekday, Maariv, Amidah, Forgiveness
+Weekday, Maariv, Amidah, Redemption
+Weekday, Maariv, Amidah, Healing
+Weekday, Maariv, Amidah, Prosperity
+Weekday, Maariv, Amidah, Gathering the Exiles
+Weekday, Maariv, Amidah, Justice
+Weekday, Maariv, Amidah, Against Enemies
+Weekday, Maariv, Amidah, The Righteous
+Weekday, Maariv, Amidah, Rebuilding Jerusalem
+Weekday, Maariv, Amidah, Kingdom of David
+Weekday, Maariv, Amidah, Response to Prayer
+Weekday, Maariv, Amidah, Temple Service
+Weekday, Maariv, Amidah, Thanksgiving
+Weekday, Maariv, Amidah, Peace
+Weekday, Maariv, Amidah, Concluding Passage
+Weekday, Maariv, Kaddish Shalem
+Weekday, Maariv, Additions for Motza'ei Shabbat, Viyehi Noam
+Weekday, Maariv, Additions for Motza'ei Shabbat, Veyiten Lekha
+Weekday, Maariv, Sefirat HaOmer
+Weekday, Maariv, Alenu
+Weekday, Maariv, Mourner's Kaddish
+Weekday, Maariv, LeDavid
+Weekday, Maariv, Birkat HaLevana
+Weekday, Maariv, Keri'at Shema al Hamita
+Shabbat, Kabbalat Shabbat, Yedid Nefesh
+Shabbat, Kabbalat Shabbat, Psalm 95
+Shabbat, Kabbalat Shabbat, Psalm 96
+Shabbat, Kabbalat Shabbat, Psalm 97
+Shabbat, Kabbalat Shabbat, Psalm 98
+Shabbat, Kabbalat Shabbat, Psalm 99
+Shabbat, Kabbalat Shabbat, Psalm 29
+Shabbat, Kabbalat Shabbat, Ana Bekoach
+Shabbat, Kabbalat Shabbat, Lekha Dodi
+Shabbat, Kabbalat Shabbat, Psalm 92
+Shabbat, Kabbalat Shabbat, Psalm 93
+Shabbat, Kabbalat Shabbat, Mourner's Kaddish
+Shabbat, Kabbalat Shabbat, Bameh Madlikin
+Shabbat, Kabbalat Shabbat, Kaddish DeRabbanan
+Shabbat, Maariv, Barchu
+Shabbat, Maariv, Blessings of the Shema, First Blessing before Shema
+Shabbat, Maariv, Blessings of the Shema, Second Blessing before Shema
+Shabbat, Maariv, Blessings of the Shema, Shema
+Shabbat, Maariv, Blessings of the Shema, First Blessing after Shema
+Shabbat, Maariv, Blessings of the Shema, Second Blessing after Shema
+Shabbat, Maariv, Veshamru
+Shabbat, Maariv, Half Kaddish
+Shabbat, Maariv, Amidah, Patriarchs
+Shabbat, Maariv, Amidah, Divine Might
+Shabbat, Maariv, Amidah, Holines of God's Name
+Shabbat, Maariv, Amidah, Sanctity of the Day
+Shabbat, Maariv, Amidah, Temple Service
+Shabbat, Maariv, Amidah, Thanksgiving
+Shabbat, Maariv, Amidah, Peace
+Shabbat, Maariv, Amidah, Concluding Passage
+Shabbat, Maariv, Vay'chulu
+Shabbat, Maariv, Me'ein Sheva
+Shabbat, Maariv, Kaddish Shalem
+Shabbat, Maariv, Sefirat HaOmer
+Shabbat, Maariv, Aleinu
+Shabbat, Maariv, Mourner's Kaddish
+Shabbat, Maariv, LeDavid
+Shabbat, Maariv, Yigdal
+Shabbat, Maariv, Adon Olam
+Shabbat, Shabbat Evening, Blessing the Children
+Shabbat, Shabbat Evening, Shalom Aleichem
+Shabbat, Shabbat Evening, Kiddush
+Shabbat, Shabbat Evening, Ribon Kol HaOlamim
+Shabbat, Shabbat Evening, Eshet Chayil
+Shabbat, Shabbat Evening, Zemirot for Shabbat Evening, Kol Mekadesh
+Shabbat, Shabbat Evening, Zemirot for Shabbat Evening, Menucha VeSimcha
+Shabbat, Shabbat Evening, Zemirot for Shabbat Evening, Ma Yedidut
+Shabbat, Shabbat Evening, Zemirot for Shabbat Evening, Yom zeh L'yisrael
+Shabbat, Shabbat Evening, Zemirot for Shabbat Evening, Yah Ribon
+Shabbat, Shabbat Evening, Zemirot for Shabbat Evening, Tzamah Nafshi
+Shabbat, Shabbat Evening, Zemirot for Shabbat Evening, Tzur Mishelo
+Shabbat, Shacharit, Preparatory Prayers, Modeh Ani
+Shabbat, Shacharit, Preparatory Prayers, Netilat Yadayim
+Shabbat, Shacharit, Preparatory Prayers, Asher Yatzar
+Shabbat, Shacharit, Preparatory Prayers, Elokai Neshama
+Shabbat, Shacharit, Preparatory Prayers, Tzitzit
+Shabbat, Shacharit, Preparatory Prayers, Tallit
+Shabbat, Shacharit, Preparatory Prayers, Ma Tovu
+Shabbat, Shacharit, Preparatory Prayers, Adon Olam
+Shabbat, Shacharit, Preparatory Prayers, Yigdal
+Shabbat, Shacharit, Preparatory Prayers, Morning Blessings
+Shabbat, Shacharit, Preparatory Prayers, Akedah
+Shabbat, Shacharit, Preparatory Prayers, Sovereignty of Heaven
+Shabbat, Shacharit, Preparatory Prayers, Korbanot, Kiyor
+Shabbat, Shacharit, Preparatory Prayers, Korbanot, Terumat HaDeshen
+Shabbat, Shacharit, Preparatory Prayers, Korbanot, Korban HaTamid
+Shabbat, Shacharit, Preparatory Prayers, Korbanot, Ketoret
+Shabbat, Shacharit, Preparatory Prayers, Korbanot, Order of the Temple Service
+Shabbat, Shacharit, Preparatory Prayers, Korbanot, Laws of Sacrifices
+Shabbat, Shacharit, Preparatory Prayers, Korbanot, Baraita of Rabbi Yishmael
+Shabbat, Shacharit, Preparatory Prayers, Korbanot, Kaddish DeRabbanan
+Shabbat, Shacharit, Pesukei Dezimra, Mizmor Shir
+Shabbat, Shacharit, Pesukei Dezimra, Mourner's Kaddish
+Shabbat, Shacharit, Pesukei Dezimra, Barukh She'amar
+Shabbat, Shacharit, Pesukei Dezimra, Hodu
+Shabbat, Shacharit, Pesukei Dezimra, Mizmor Letoda
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 19
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 34
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 90
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 91
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 135
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 136
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 33
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 92
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 93
+Shabbat, Shacharit, Pesukei Dezimra, Yehi Chevod
+Shabbat, Shacharit, Pesukei Dezimra, Ashrei
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 146
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 147
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 148
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 149
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 150
+Shabbat, Shacharit, Pesukei Dezimra, Baruch Hashem
+Shabbat, Shacharit, Pesukei Dezimra, Vayevarech David
+Shabbat, Shacharit, Pesukei Dezimra, Shirat HaYam
+Shabbat, Shacharit, Pesukei Dezimra, Nishmat Kol Chai
+Shabbat, Shacharit, Pesukei Dezimra, Shochen Ad
+Shabbat, Shacharit, Pesukei Dezimra, Yishtabach
+Shabbat, Shacharit, Pesukei Dezimra, Psalm 130
+Shabbat, Shacharit, Pesukei Dezimra, Half Kaddish
+Shabbat, Shacharit, Blessings of the Shema, Barchu
+Shabbat, Shacharit, Blessings of the Shema, First Blessing before Shema
+Shabbat, Shacharit, Blessings of the Shema, Second Blessing before Shema
+Shabbat, Shacharit, Blessings of the Shema, Shema
+Shabbat, Shacharit, Blessings of the Shema, Blessing after Shema
+Shabbat, Shacharit, Amidah, Patriarchs
+Shabbat, Shacharit, Amidah, Divine Might
+Shabbat, Shacharit, Amidah, Kedushah
+Shabbat, Shacharit, Amidah, Holiness of God
+Shabbat, Shacharit, Amidah, Sanctity of the Day
+Shabbat, Shacharit, Amidah, Temple Service
+Shabbat, Shacharit, Amidah, Thanksgiving
+Shabbat, Shacharit, Amidah, Birkat Kohanim
+Shabbat, Shacharit, Amidah, Peace
+Shabbat, Shacharit, Amidah, Concluding Passage
+Shabbat, Shacharit, Amidah, Kaddish Shalem
+Shabbat, Shacharit, Torah Reading, Removing the Torah from the Ark, Ein Kamocha
+Shabbat, Shacharit, Torah Reading, Removing the Torah from the Ark, Vayehi Binsoa
+Shabbat, Shacharit, Torah Reading, Removing the Torah from the Ark, Berich Shmei
+Shabbat, Shacharit, Torah Reading, Removing the Torah from the Ark, Shema Yisrael (Gadlu)
+Shabbat, Shacharit, Torah Reading, Removing the Torah from the Ark, Lecha Hashem
+Shabbat, Shacharit, Torah Reading, Removing the Torah from the Ark, Veyazor Veyagen
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Birkat HaTorah
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Birkat Hagomel
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Mi Sheberach, For an Oleh
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Mi Sheberach, For Sickness (includes man and woman)
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Mi Sheberach, For Birth, Birth of a Son
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Mi Sheberach, For Birth, Birth of Daughter
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Mi Sheberach, Bar Mitzvah
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Mi Sheberach, Bat Mitzvah
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Half Kaddish
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Raising the Torah
+Shabbat, Shacharit, Torah Reading, Reading from Sefer, Haftarah
+Shabbat, Shacharit, Communal Prayers, Yekum Purkan
+Shabbat, Shacharit, Communal Prayers, Prayer of the State of Israel
+Shabbat, Shacharit, Communal Prayers, Prayer for Israeli Soldiers
+Shabbat, Shacharit, Communal Prayers, Prayer for Those Being Held in Captivity
+Shabbat, Shacharit, Communal Prayers, Birkat Hachodesh
+Shabbat, Shacharit, Communal Prayers, Av HaRachamim
+Shabbat, Shacharit, Ashrei
+Shabbat, Shacharit, Returning Sefer to Aron
+Shabbat, Shacharit, Half Kaddish
+Shabbat, Musaf LeShabbat, Amidah, Patriarchs
+Shabbat, Musaf LeShabbat, Amidah, Divine Might
+Shabbat, Musaf LeShabbat, Amidah, Kedushah
+Shabbat, Musaf LeShabbat, Amidah, Holiness of God
+Shabbat, Musaf LeShabbat, Amidah, Sanctity of the Day, For Shabbat
+Shabbat, Musaf LeShabbat, Amidah, Sanctity of the Day, For Shabbat Rosh Chodesh
+Shabbat, Musaf LeShabbat, Amidah, Temple Service
+Shabbat, Musaf LeShabbat, Amidah, Thanksgiving
+Shabbat, Musaf LeShabbat, Amidah, Birkat Kohanim
+Shabbat, Musaf LeShabbat, Amidah, Peace
+Shabbat, Musaf LeShabbat, Amidah, Concluding Passage
+Shabbat, Musaf LeShabbat, Amidah, Kaddish Shalem
+Shabbat, Musaf LeShabbat, Kaddish Shalem
+Shabbat, Musaf LeShabbat, Ein Keloheinu
+Shabbat, Musaf LeShabbat, Pitum Haketoret
+Shabbat, Musaf LeShabbat, Kaddish Derabbanan
+Shabbat, Musaf LeShabbat, Alenu
+Shabbat, Musaf LeShabbat, Mourner's Kaddish
+Shabbat, Musaf LeShabbat, Mizmor Shir L'Yom HaShabbat
+Shabbat, Musaf LeShabbat, Mourner's Kaddish
+Shabbat, Musaf LeShabbat, LeDavid
+Shabbat, Musaf LeShabbat, Shir HaKavod
+Shabbat, Musaf LeShabbat, Mourner's Kaddish
+Shabbat, Musaf LeShabbat, Adon Olam
+Shabbat, Daytime Meal, Kiddusha Rabba
+Shabbat, Daytime Meal, Zemirot for Second Meal, Baruch Kel Elyon
+Shabbat, Daytime Meal, Zemirot for Second Meal, Yom Zeh Mechubad
+Shabbat, Daytime Meal, Zemirot for Second Meal, Yom Shabbaton
+Shabbat, Daytime Meal, Zemirot for Second Meal, Shimru Shabtotai
+Shabbat, Daytime Meal, Zemirot for Second Meal, Ki Eshmera
+Shabbat, Daytime Meal, Zemirot for Second Meal, Dror Yikrah
+Shabbat, Minchah, Ashrei
+Shabbat, Minchah, Uva Letzion
+Shabbat, Minchah, Half Kaddish
+Shabbat, Minchah, Torah Reading, Removing the Torah from Ark, Va'ani Tefillati
+Shabbat, Minchah, Torah Reading, Removing the Torah from Ark, Vayehi Binsoa
+Shabbat, Minchah, Torah Reading, Removing the Torah from Ark, Berich Shmei
+Shabbat, Minchah, Torah Reading, Removing the Torah from Ark, Gadlu
+Shabbat, Minchah, Torah Reading, Removing the Torah from Ark, Lekha Hashem
+Shabbat, Minchah, Torah Reading, Removing the Torah from Ark, Av Harachamim
+Shabbat, Minchah, Torah Reading, Removing the Torah from Ark, Vetigaleh Veteraeh
+Shabbat, Minchah, Torah Reading, Reading from Sefer, Birkat HaTorah
+Shabbat, Minchah, Torah Reading, Reading from Sefer, Raising the Torah
+Shabbat, Minchah, Torah Reading, Returning Sefer to Aron, Yehalelu
+Shabbat, Minchah, Torah Reading, Returning Sefer to Aron, LeDavid
+Shabbat, Minchah, Torah Reading, Returning Sefer to Aron, Uvenucho Yomar
+Shabbat, Minchah, Amidah, Patriarchs
+Shabbat, Minchah, Amidah, Divine Might
+Shabbat, Minchah, Amidah, Kedushah
+Shabbat, Minchah, Amidah, Holiness of God
+Shabbat, Minchah, Amidah, Sanctity of the Day
+Shabbat, Minchah, Amidah, Temple Service
+Shabbat, Minchah, Amidah, Thanksgiving, Modim
+Shabbat, Minchah, Amidah, Thanksgiving, Al Hanisim for Chanukkah
+Shabbat, Minchah, Amidah, Thanksgiving, Al Hanisim for Purim
+Shabbat, Minchah, Amidah, Peace
+Shabbat, Minchah, Amidah, Concluding Passage
+Shabbat, Minchah, Tzidkatkhah Tzedek
+Shabbat, Minchah, Kaddish Shalem
+Shabbat, Minchah, Alenu
+Shabbat, Minchah, Mourner's Kaddish
+Shabbat, Minchah, Barchi Nafshi
+Shabbat, Third Meal, Atkinu
+Shabbat, Third Meal, Mizmor LeDavid
+Shabbat, Third Meal, Yedid Nefesh
+Shabbat, Havdalah
+Festivals, Rosh Chodesh, Hallel, Berakhah before the Hallel
+Festivals, Rosh Chodesh, Hallel, Psalm 113
+Festivals, Rosh Chodesh, Hallel, Psalm 114
+Festivals, Rosh Chodesh, Hallel, Psalm 115
+Festivals, Rosh Chodesh, Hallel, Psalm 116
+Festivals, Rosh Chodesh, Hallel, Psalm 117
+Festivals, Rosh Chodesh, Hallel, Psalm 118
+Festivals, Rosh Chodesh, Hallel, Berakhah after the Hallel
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Avot
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Gevurot
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Kedushah, Kedushat HaShem
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Sanctity of the Day
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Avodah
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Hodayah
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Birkat Kohanim
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Peace
+Festivals, Rosh Chodesh, Musaf Amidah for Rosh Chodesh, Passages Ending Amidah
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Avot
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Gevurot
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Kedusha
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Sanctity of the Day
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Avodah
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Modim
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Birkat Kohanim
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Peace
+Festivals, Shalosh Regalim, Amida for Maariv, Shacharit, Mincha, Concluding Prayer
+Festivals, Shalosh Regalim, Mussaf, Avot
+Festivals, Shalosh Regalim, Mussaf, Gevurot
+Festivals, Shalosh Regalim, Mussaf, Kedusha
+Festivals, Shalosh Regalim, Mussaf, Sanctity of the Name
+Festivals, Shalosh Regalim, Mussaf, Sanctity of the Day
+Festivals, Shalosh Regalim, Mussaf, Avodah
+Festivals, Shalosh Regalim, Mussaf, Modim
+Festivals, Shalosh Regalim, Mussaf, Birkat Kohanim
+Festivals, Shalosh Regalim, Mussaf, Peace
+Festivals, Shalosh Regalim, Mussaf, Concluding Prayer
+Festivals, Prayer for Dew
+Festivals, Prayer for Rain
+Festivals, Sukkot, Prayers in the Sukkah, Entering the Sukkah
+Festivals, Sukkot, Prayers in the Sukkah, Ushpizin
+Festivals, Sukkot, Prayers in the Sukkah, Leaving the Sukkah
+Festivals, Sukkot, Blessing on Lulav
+Festivals, Sukkot, Hosha'anot, For Shabbat Chol Hamoed
+Festivals, Sukkot, Hosha'anot, First Day of Sukkot
+Festivals, Sukkot, Hosha'anot, Second Day of Sukkot
+Festivals, Sukkot, Hosha'anot, Third Day of Sukkot
+Festivals, Sukkot, Hosha'anot, Fourth Day of Sukkot
+Festivals, Sukkot, Hosha'anot, Fifth Day of Sukkot
+Festivals, Sukkot, Hosha'anot, Sixth Day of Sukkot
+Festivals, Sukkot, Hosha'anot, Hosha'ana Rabba
+Festivals, Chanukah, Service for Lighting Chanukah Candles, Blessings on Chanukah Candles
+Festivals, Chanukah, Service for Lighting Chanukah Candles, Hanerot Hallalu
+Festivals, Chanukah, Service for Lighting Chanukah Candles, Maoz Tzur
+Festivals, Selichot, Fast of Gedalia
+Festivals, Selichot, Ten of Tevet
+Festivals, Selichot, Fast of Esther
+Festivals, Selichot, Seventeen of Tamuz
+Festivals, Selichot, Yom Kippur Katan
+Festivals, Selichot, BaHaB
+Berachot, Birkat HaMazon
+Berachot, Birkat Hanehenin, Eating, Barachot Rishonot
+Berachot, Birkat Hanehenin, Eating, Brachot Achronot, Al Hamichyah
+Berachot, Birkat Hanehenin, Eating, Brachot Achronot, Borei Nefashot
+Berachot, Birkat Hanehenin, Blessings on Sights Sounds and Smells
+Berachot, Birkhot Hamitzvot
+Berachot, Asher Yatzar Etchem Badin
+Berachot, Tefillat HaDerech
+Berachot, Havinenu
+Kaddish, Half Kaddish
+Kaddish, Mourner's Kaddish
+Kaddish, Kaddish Shalem
+Kaddish, Kaddish d'Rabbanan
+Kaddish, Kaddish achar HaKevura
+Kaddish, Kaddish achar Hashlamat Meschet
