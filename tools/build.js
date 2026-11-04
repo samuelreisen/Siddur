@@ -8,7 +8,9 @@ const ROOT = path.join(__dirname, '..');
 const read = f => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8');
 
 const data = read('data.json').replace(/<\//g, '<\\/');
-const js = read('calendar.js') + '\n' + read('tilt.js') + '\n' + read('updates.js') + '\n' + read('app.js');
+// Script files are joined in this order into one script, so they share top-level names. Missing files are skipped.
+const SCRIPTS = ['calendar.js', 'theme.js', 'reader.js', 'tilt.js', 'updates.js', 'app.js'];
+const js = SCRIPTS.filter(f => fs.existsSync(path.join(ROOT, 'src', f))).map(read).join('\n');
 const page = read('index.html')
   .replace('/*CSS*/', () => read('app.css'))
   .replace('/*DATA*/', () => 'const SIDDUR_DATA = ' + data + ';')
