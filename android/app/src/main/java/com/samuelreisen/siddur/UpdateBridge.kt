@@ -70,7 +70,7 @@ class UpdateBridge(private val activity: MainActivity, private val updater: Upda
         activity.sendEvent("install", result.toString())
     }
 
-    /** The page reports its reading theme. Anything but the four known modes is ignored silently. */
+    /** The page reports its reading theme. Anything but the five known modes is ignored silently. */
     @JavascriptInterface
     fun setAppearance(mode: String?) {
         val valid = Appearance.parse(mode) ?: return
