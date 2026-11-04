@@ -1,0 +1,31 @@
+name: Android build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build the siddur page into the app
+        run: |
+          node tools/build-data.js
+          node tools/build.js
+          node tools/android-assets.js
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: siddur-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
