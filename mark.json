@@ -1,7 +1,7 @@
 {
-  "mark": 1,
-  "name": "Mk I",
-  "title": "Smart siddur, first mark",
-  "notes": "Smart Ashkenaz siddur web app, mourner tools, HIG design, build pipeline and handoff system.",
-  "created": "2026-11-04T06:42:01.939Z"
+  "mark": 2,
+  "name": "Mk II",
+  "title": "In-app updates",
+  "notes": "The Android app can update itself from .oleh files on GitHub, only when you tap. Includes tilt to turn pages.",
+  "created": "2026-11-04T09:00:11.141Z"
 }

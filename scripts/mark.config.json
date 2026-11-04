@@ -2,7 +2,7 @@
   "project": "Siddur",
   "ext": ".oleh",
   "previousExts": [],
-  "shellVersion": "1.0.0",
+  "shellVersion": "1.1.0",
   "minShell": "1.0.0",
   "include": ["README.md", "CLAUDE.md", ".gitignore", "siddur.html", "src", "tools", "data", "dist", "scripts", "android", ".github"],
   "exclude": ["node_modules", ".git", "marks", "handoff-history", "*.log", ".DS_Store", "build", ".gradle", ".kotlin", "local.properties", ".idea", "*.apk"]

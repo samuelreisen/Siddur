@@ -1,6 +1,6 @@
-<!-- handoff-mark: 1 -->
+<!-- handoff-mark: 2 -->
 
-**Current mark: Mk I**
+**Current mark: Mk II**
 
 # Siddur – handoff
 
@@ -45,7 +45,7 @@ cd android && ./gradlew assembleDebug   # needs JDK 17+ and ANDROID_HOME
 ```
 
 > **DANGER: test data.** Tests and experiments must run against a scratch data folder, never the real data.
-> Real data lives at: each user's own browser or Android WebView `localStorage`, keys `siddur.settings` and `siddur.mourner` (the mourner key holds a deceased person's name and date of passing). Nothing is stored in the repo or on a server.
+> Real data lives at: each user's own browser or Android WebView `localStorage`, keys `siddur.settings` and `siddur.mourner` (the mourner key holds a deceased person's name and date of passing). Nothing is stored in the repo or on a server. The Android app also keeps installed updates in its own files folder (`site/MkN/`, `updates/files/`, `updates/state.json`).
 > There is no env var. Test with Playwright's fresh, throwaway browser context (it starts with empty storage), as the session-1 tests did. Never script anything that clears storage on a real device.
 > If this project has no scratch switch yet, point it at a temporary copy before running anything that writes.
 
@@ -55,6 +55,7 @@ cd android && ./gradlew assembleDebug   # needs JDK 17+ and ANDROID_HOME
 - `src/calendar.js`: Hebrew calendar facts for a day (`dayFacts`), Hebrew numerals, labels. Pure functions, built on `Intl` with the Hebrew calendar.
 - `src/app.js`: settings, which service to build, the label rules that show or hide inserts, rendering, mourner tools, tabs.
 - `src/tilt.js`: tilt to turn pages (motion sensor flick detection, page scroll, toast). Built before `app.js` in the same script, so it shares `settings`.
+- `src/updates.js`: the App Updates section in Settings. Shown only when the Android app provides `window.SiddurApp`.
 - `src/data.json`: generated, trimmed text (406 sections plus Psalms 16 and 49). Do not hand-edit; regenerate with `tools/build-data.js`.
 - `data/raw-siddur-ashkenaz.json`: full Sefaria download (449 of 456 sections). `data/order.txt`: section order. `data/raw-psalm-16.json`, `data/raw-psalm-49.json`.
 - `tools/fetch-sefaria.js`, `tools/build-data.js`, `tools/build.js`: the pipeline above.
@@ -63,6 +64,10 @@ cd android && ./gradlew assembleDebug   # needs JDK 17+ and ANDROID_HOME
 - `marks/history.json`: every mark made. `marks/out/`: the `.oleh` files.
 - `CLAUDE.md`: tells Claude to read this file first.
 - On `android-app` only: `android/` (Gradle project), `tools/android-assets.js`, `.github/workflows/android.yml`, `apk/siddur-debug.apk`, `android/app/src/main/assets/fonts/` (Frank Ruhl Libre woff2 subsets plus OFL.txt).
+  - `android/app/src/main/java/com/samuelreisen/siddur/`: `MainActivity.kt` (WebView, asset loader, file picker, opening `.oleh` files), `MarkFile.kt` (reads `.oleh`, same checks as `markpack.js`), `Updater.kt` (installed versions, which page to show, keeps 5), `UpdateBridge.kt` (`window.SiddurApp`, GitHub downloads).
+  - `android/app/src/test/.../MarkUpdateTest.kt`: unit tests (`./gradlew testDebugUnitTest`), reading the real `marks/out/Siddur-MkI.oleh`.
+  - `android/app/src/main/assets/bundled-mark.json`: which Mk the built-in page is, written by `tools/android-assets.js` from `mark.json`.
+  - `android/app/proguard-rules.pro`: keeps the bridge methods in release builds.
 
 ## 4. Data model
 `src/data.json` is `{ sections: [{ k, he: [paragraph html], en: [paragraph html] }], psalms: { 16: { he, en }, 49: { he, en } } }`.
@@ -98,6 +103,7 @@ Regression targets (numbers this logic was verified against, re-check after chan
 - **Chanukah candles**: shown at the top of weekday Maariv and Friday-night services during Chanukah, with the night number and the Shehecheyanu rule.
 - **Kaddish transliteration**: written in `TRANSLIT` in `app.js` (Mourner's and D'Rabbanan).
 - **Tilt to turn pages** (`src/tilt.js`, Settings › Display, off by default): reads `devicemotion` rotation speed. A flick to the left (negative value) scrolls forward one screen minus the top bar, section bar and 48px overlap; a flick to the right scrolls back. It turns only when the speed passes the threshold (Firm 200, Hard 300 default, Very Hard 420 degrees per second) for 2 readings in a row, then ignores all motion for 1000 ms so the swing back doesn't undo the turn. Ignored while a finger is on the screen, on the Mourners and Settings tabs, and when the page is hidden. Counts a twist (rotation about the screen's vertical axis: `gamma` in portrait, `beta` in landscape) or a steer (`alpha`, counterclockwise is left), whichever is stronger. Shows a "Next page" / "Previous page" toast and a 12 ms vibration. If no readings arrive within 2.5 s it says sensors aren't available. On iOS it asks permission on the tap; only an explicit "denied" turns it off (Chromium answers "prompt" without asking).
+- **In-app updates** (Android 1.1.0+, Settings › App Updates, only on tap): Check for Updates downloads `https://raw.githubusercontent.com/samuelreisen/Siddur/main/marks/history.json`; if its newest mark is newer than the one in use it offers it ("needs a newer app" when its `minShell` is above the app's version). Install downloads the `.oleh` named in the history record (path must match `marks/out/*.oleh`), checks its sha256 against the record, parses it with `MarkFile` (magic, header, payload and per-file checksums, safe paths, minShell), writes `site/MkN/index.html` with the Google Fonts link pointed at `/assets/fonts/fonts.css`, stores the file, keeps the newest 5 and reloads. Install Update File… and opening a `.oleh` from Files install the chosen file and pin it. The page in use is the installed mark when it is newer than the built-in one or was picked by hand; otherwise the built-in page, so a newer APK moves past an older download. Pages load from `https://appassets.androidplatform.net` (`/assets/` and `/site/`) through `WebViewAssetLoader`, one origin, so `localStorage` survives version switches. raw.githubusercontent.com caches for about 5 minutes, so a just-pushed mark can take that long to show.
 
 ## 7. Traps and facts only real data revealed
 - Sefaria's section order is not the API return order. Always use `data/order.txt`.
@@ -111,13 +117,13 @@ Regression targets (numbers this logic was verified against, re-check after chan
 - `android-actions/setup-android@v3`'s default package list includes the legacy `tools` package, which the runner's newer sdkmanager lacks; the workflow lists packages explicitly.
 
 ## 8. Persistence
-Only browser/WebView `localStorage`: `siddur.settings` and `siddur.mourner`. Every read and write is wrapped in try/catch, and the page works without storage. Nothing is synced or backed up.
+Browser/WebView `localStorage`: `siddur.settings` and `siddur.mourner`. Every read and write is wrapped in try/catch, and the page works without storage. Nothing is synced or backed up (the Android app sets `allowBackup="false"`, since the mourner data names the deceased). The Android app also keeps installed updates in its files folder (see section 6). App 1.1.0 moved the page from `file:///android_asset/` to `https://appassets.androidplatform.net`, a new origin, so settings saved in app 1.0 don't carry over (once).
 
 **Must never be lost:** the source text pipeline (`data/`, `tools/`), and the owner's artifact URL. Users' mourner details live only on their device.
 
 ## 9. UI notes and traps
 - Apple HIG design (session 1): bottom tab bar (Pray, Mourners, Settings), large title, prayers edge to edge with hairline separators, settings as grouped lists with switches (`input[role="switch"]`), 17px body text, 44px targets, accent blue only for controls, gold for today's inserts, purple for mourner items, true-black dark mode, `prefers-contrast: more`.
-- Hebrew is set in Frank Ruhl Libre via Google Fonts on the web; Android bundles the font (the app has no internet permission).
+- Hebrew is set in Frank Ruhl Libre via Google Fonts on the web; Android bundles the font and points every page at it, so it works offline (the app's internet permission is only used for updates).
 - Hebrew text is right-aligned on phones and justified at 600px and wider (justify left big gaps on narrow screens).
 - Artifact pages can't use reserved hashes (`settings` and others), so tabs are in-page state, not URL routes.
 - Wake lock is requested and may be refused; Android keeps the screen on via `FLAG_KEEP_SCREEN_ON`.
@@ -125,34 +131,46 @@ Only browser/WebView `localStorage`: `siddur.settings` and `siddur.mourner`. Eve
 - `[hidden] { display: none !important; }` is in `app.css` because the standalone page (Android) has no host reset and some hidden rows use `display: flex`.
 
 ## 10. Platform and build notes
-- Android: package `com.samuelreisen.siddur`, min API 24, target and compile 35, AGP 8.7.3, Kotlin 2.0.21, Gradle wrapper 8.14.3, versionName 1.0 (`shellVersion` 1.0.0 in `scripts/mark.config.json`). Debug-signed only.
+- Android: package `com.samuelreisen.siddur`, min API 24, target and compile 35, AGP 8.7.3, Kotlin 2.0.21, Gradle wrapper 8.14.3, versionCode 2, versionName 1.1.0 (the "shell" version update files are checked against; `shellVersion` 1.1.0 in `scripts/mark.config.json`, `minShell` 1.0.0). Libraries: appcompat, activity-ktx, webkit (`WebViewAssetLoader`); tests use junit and the real org.json. The shipped APK is debug-signed; the release build type is minified and shrunk but has no release keystore yet. Manifest: `allowBackup="false"`, `usesCleartextTraffic="false"`, `INTERNET`, `launchMode="singleTask"`, a VIEW filter for `application/octet-stream` content (opening `.oleh` files; anything else is refused with a message).
 - CI: `.github/workflows/android.yml` on `android-app` builds the page, then the APK, and uploads `siddur-debug-apk`.
 - In the session-1 cloud container the SDK was at `/home/user/android-sdk` and Java 21 worked; Maven Central sometimes returned HTTP 429 through the proxy, and a re-run fixed it.
-- The Android app has no updater of its own, so marks install with `scripts/install-mark.js` into a checkout, not into the app.
+- The Android app installs marks itself (section 6). `scripts/install-mark.js` still installs a mark into a checkout. The app reads only `dist/index.html`, `mark.json` and `HANDOFF.md` from a mark; it never writes other paths from the file.
+- No emulator in the session-1 container (no KVM), so the native update flow was checked by unit tests and a live download check, not on a device.
 
 ## 11. Working method
 - Read this file first. Log every change (see the Maintenance rule).
 - Ship changes with `node scripts/make-mark.js --title "..." --notes "..." --entry entry.md`. Call `node` directly for multi-line notes: on Windows, `npm run` cuts a multi-line argument at the first line break.
 - Marks are named Mk I, Mk II, Mk III (roman numerals). The `handoff-mark` stamp and `marks/history.json` hold the plain number. Update files use the extension `.oleh` (magic bytes `OLEH____`).
 - Install a mark with `node scripts/install-mark.js <file>` (newer HANDOFF.md wins, the replaced one is kept in `handoff-history/`). `node scripts/verify-mark-system.js` re-checks the whole system.
-- Branches: `main` holds the web app and this file; `android-app` holds main plus the Android project. Merge `main` into `android-app` after changes, then rerun `tools/android-assets.js` and rebuild the APK. PR #1 (`android-app` into `main`) is a draft.
+- Branches: `main` holds the web app and this file; `android-app` holds main plus the Android project. The owner wants exactly these two branches and does not want PR #1 (`android-app` into `main`, draft) merged. Merge `main` into `android-app` after changes, then rerun `tools/android-assets.js` and rebuild the APK.
+- Shipping an update to phones: on `main`, make the next mark and push (the app reads `marks/history.json` and `marks/out/` from `main`). Then merge into `android-app`, run `tools/android-assets.js` (it stamps `bundled-mark.json` from the new `mark.json`) and rebuild the APK, so the built-in page and its Mk number match. Bump the app's `versionName` and the mark config's `minShell` only when a page needs something new from the app.
 - After changing the page, rebuild (`tools/build.js`) and republish `siddur.html` to the artifact URL.
 - Git commits use the owner's name and email; commits and PRs carry Claude attribution lines.
 
 ## 12. Open items and known quirks (prioritised)
-1. The Android APK has not been run on a physical device.
-2. Tilt to turn pages was tested only with simulated sensor readings. On a real phone, check the direction (left must be forward), the landscape axis signs, and that "Hard" feels right; adjust `TILT_THRESHOLDS` or the signs in `tiltRate()` if not.
-3. CI builds the APK on GitHub (fixed setup-android packages). The artifact upload may fail while the account artifact quota is full; it no longer fails the job.
-4. Not yet supported: Rosh Hashanah and Yom Kippur services (points to a machzor), Selichot, Hoshanot, Yizkor, Birkat HaMazon, Kiddush for festivals, Sefardi or Chabad nusach.
-5. Customs not modeled: Yom HaAtzmaut and Yom Yerushalayim (Tachanun, Hallel), Shushan Purim in Jerusalem, a chatan or brit in the minyan (no Tachanun), Tachanun on Erev Rosh Hashanah at Selichot.
-6. Festival-day services reuse Shabbat Shacharit parts; Shabbat and festival Kedushah wording comes straight from the source sections.
-7. Hebrew-only UI labels in the source text (instructions) are shown in Hebrew.
+1. The Android APK has not been run on a physical device. The in-app update flow (bridge, download, reload, file picker, opening a `.oleh`) is untested on a device.
+2. Update files are checked for damage (sha256), not signed. Anyone who can push to `main`, or who gets someone to open a crafted `.oleh`, can replace the page, and that page could read the saved mourner details and send them out now that the app has internet access. Fix: sign marks with a private key kept out of the repo and check the signature in `MarkFile`.
+3. The APK is debug-signed with the build machine's key, which changes between sessions, so installing a newer APK over an older one can fail with "App not installed"; uninstall first. A release keystore kept outside the repo would fix it.
+4. Phones on app 1.0 have no updater; they need the 1.1.0 APK installed by hand once, and lose their 1.0 settings (new page origin).
+5. Tilt to turn pages was tested only with simulated sensor readings. On a real phone, check the direction (left must be forward), the landscape axis signs, and that "Hard" feels right; adjust `TILT_THRESHOLDS` or the signs in `tiltRate()` if not.
+6. CI builds the APK on GitHub (fixed setup-android packages). The artifact upload may fail while the account artifact quota is full; it no longer fails the job.
+7. Not yet supported: Rosh Hashanah and Yom Kippur services (points to a machzor), Selichot, Hoshanot, Yizkor, Birkat HaMazon, Kiddush for festivals, Sefardi or Chabad nusach.
+8. Customs not modeled: Yom HaAtzmaut and Yom Yerushalayim (Tachanun, Hallel), Shushan Purim in Jerusalem, a chatan or brit in the minyan (no Tachanun), Tachanun on Erev Rosh Hashanah at Selichot.
+9. Festival-day services reuse Shabbat Shacharit parts; Shabbat and festival Kedushah wording comes straight from the source sections.
+10. Hebrew-only UI labels in the source text (instructions) are shown in Hebrew.
 
 ## 13. Rough chronology (why the code looks the way it does)
 - Session 1 (2026-11-04): asked for a siddur "asap" as an artifact plus an Android app with smart pages and mourner options. First plan was to type the texts; the owner said to find a siddur online, so the whole Metsudah siddur was pulled from Sefaria, and the day logic was built on its own instruction labels instead of hand-written texts. The Android shell was delegated to a Sonnet sub-agent and reviewed. The UI was then redesigned to the Apple HIG. Then this handoff system was added.
 
 ## 14. Change log
 Format: `### <date> – <title>` then the four fields **Asked**, **Changed**, **Verified**, **Not done**. Newest first. Mark entries read `### <date> – Mk <Roman> "<title>" – update file` and end with a **Mark file** line.
+
+### 2026-11-04 – Mk II "In-app updates" – update file
+- **Asked** – "The apk doesn't have an update function." Owner chose: self-update with .oleh files, checked only when they tap.
+- **Changed** – Web (`main`): `src/updates.js` and an App Updates section in Settings (installed version, Check for Updates, Install, Install Update File…, versions on this phone with Use This Version), shown only when the app provides `window.SiddurApp`; `.btn-plain` style; `tools/build.js` adds `updates.js`; `scripts/mark.config.json` shellVersion 1.1.0. Android (`android-app`): `MarkFile.kt`, `Updater.kt`, `UpdateBridge.kt`, rewritten `MainActivity.kt` (WebViewAssetLoader origin, bridge, file picker, opening `.oleh` files), `INTERNET` permission, app 1.1.0, `tools/android-assets.js` writes `bundled-mark.json`, unit tests. Security pass (secure skill): `allowBackup="false"`, `usesCleartextTraffic="false"`, release build minified with a keep rule for the bridge. Bug found and fixed while building: `files/*.oleh` inside a Kotlin comment opened a nested comment and broke compilation.
+- **Verified** – Settings screen in Chromium with a fake bridge: 13/13 (hidden without the app; up to date, available with Install, needs a newer app, offline error, install, switch version, cancelled picker, no sideways scroll; 0 errors). Android unit tests 8/8 (`./gradlew testDebugUnitTest`): reads the real Mk I file; refuses tampered (DAMAGED), wrong magic and too short (NOT_A_MARK), too-new shell (TOO_NEW), `../` and absolute paths; install switches the page and points the font at the bundled copy; an older download doesn't beat a newer built-in page unless picked; a newer APK moves past an older download; keeps the newest 5; a bad file changes nothing. Release build: dexdump shows `info`, `check`, `install`, `pickFile`, `use` kept after R8; manifest shows allowBackup false, cleartext false. Secret and logging scan of the app sources: nothing found.
+- **Not done** – No emulator here, so the bridge, downloads, reload, picker and opening a `.oleh` are untested on a device. Update files are checksummed, not signed (open item 2). Phones on app 1.0 must install 1.1.0 by hand once and lose their 1.0 settings.
+- **Mark file:** `marks/out/Siddur-MkII.oleh` (26 files, minimum shell 1.0.0)
 
 ### 2026-11-04 – Tilt to turn pages
 - **Asked** – "Make it so you can turn the page by tilting your phone left and go to the previous page by tilting right. Make it only work if you do it hard enough so you don't accidentally turn a page."
