@@ -218,6 +218,13 @@ input[role="switch"]:checked::before { transform: translateX(20px); }
 .strength-row { flex-wrap: wrap; }
 .strength-row .seg { margin-left: auto; }
 
+/* No double-tap zoom delay on taps. */
+html { touch-action: manipulation; }
+
+/* In the Android app, the bars are solid instead of frosted: backdrop blur is the slowest effect on cheap phone GPUs
+   and it redraws on every scroll frame. */
+.native-app .bar, .native-app .tabbar, .native-app .page-toast, .native-app .sheet { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--bg); }
+
 /* Page-turn feedback (control layer) */
 .page-toast { position: fixed; left: 50%; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 40px); transform: translateX(-50%); z-index: 9; background: var(--glass); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); border: 0.5px solid var(--glass-line); border-radius: 999px; padding: 8px 16px; font-size: 0.9375rem; font-weight: 600; box-shadow: 0 8px 24px rgb(0 0 0 / 0.12); pointer-events: none; }
 .page-toast.show { animation: toast 1.1s var(--ease) forwards; }
@@ -276,7 +283,7 @@ input[role="switch"]:checked::before { transform: translateX(20px); }
 .seg.wide button::after { inset: 0; }
 
 /* Reading progress (Pray tab) */
-.read-progress { position: fixed; left: 0; right: 0; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); z-index: 4; text-align: center; padding: 3px 16px; font-size: 0.75rem; line-height: 1.3; color: var(--label-2); background: var(--glass); pointer-events: none; font-variant-numeric: tabular-nums; }
+.read-progress { position: fixed; left: 0; right: 0; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); z-index: 4; text-align: center; padding: 3px 16px; font-size: 0.75rem; line-height: 1.3; color: var(--label-2); background: var(--bg); border-top: 0.5px solid var(--separator); pointer-events: none; font-variant-numeric: tabular-nums; }
 
 /* Reading mode: the controls fade away, tap the middle to bring them back */
 .bar, .tabbar, .toc, .read-progress { transition: opacity 160ms ease, visibility 0s linear 0s; }
@@ -835,6 +842,7 @@ function onTap(e) {
 function onTabChange(tab) {
   const pray = tab === 'pray';
   document.getElementById('aa-btn').hidden = !pray;
+  document.getElementById('read-progress').hidden = !pray; // hide now, not a frame later
   closeSheet(false);
   setReadingMode(false);
   updateProgress();
@@ -961,6 +969,8 @@ function bindTilt() {
 // Nothing is downloaded until the person taps.
 
 const nativeApp = window.SiddurApp || null;
+// Lets the stylesheet drop effects that are slow on phone GPUs (see .native-app in app.css).
+if (nativeApp) document.documentElement.classList.add('native-app');
 
 function appInfo() {
   try { return JSON.parse(nativeApp.info()); } catch (e) { return null; }

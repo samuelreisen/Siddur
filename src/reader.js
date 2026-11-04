@@ -153,6 +153,7 @@ function onTap(e) {
 function onTabChange(tab) {
   const pray = tab === 'pray';
   document.getElementById('aa-btn').hidden = !pray;
+  document.getElementById('read-progress').hidden = !pray; // hide now, not a frame later
   closeSheet(false);
   setReadingMode(false);
   updateProgress();

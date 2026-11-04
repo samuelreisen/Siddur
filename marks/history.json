@@ -22,5 +22,17 @@
     "bytes": 1867740,
     "minShell": "1.0.0",
     "handoff": true
+  },
+  {
+    "mark": 3,
+    "name": "Mk III",
+    "title": "Kindle-style reading",
+    "notes": "Light, Paper, Dark and Auto themes, Aa sheet, page progress, tap zones, Android system bars that follow the theme.",
+    "created": "2026-11-04T16:33:20.629Z",
+    "file": "marks/out/Siddur-MkIII.oleh",
+    "sha256": "86430bac63f6abd55debfc9ab2a0c576d93ee232acab4c11299a1db26f926462",
+    "bytes": 1886670,
+    "minShell": "1.0.0",
+    "handoff": true
   }
 ]

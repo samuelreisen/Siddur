@@ -3,6 +3,8 @@
 // Nothing is downloaded until the person taps.
 
 const nativeApp = window.SiddurApp || null;
+// Lets the stylesheet drop effects that are slow on phone GPUs (see .native-app in app.css).
+if (nativeApp) document.documentElement.classList.add('native-app');
 
 function appInfo() {
   try { return JSON.parse(nativeApp.info()); } catch (e) { return null; }
