@@ -11,9 +11,9 @@ android {
         applicationId = "com.samuelreisen.siddur"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
+        versionCode = 3
         // The "shell" version that update files check against (minShell in scripts/mark.config.json).
-        versionName = "1.1.0"
+        versionName = "1.2.0"
     }
 
     buildFeatures {
