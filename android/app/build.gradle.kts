@@ -11,8 +11,13 @@ android {
         applicationId = "com.samuelreisen.siddur"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        // The "shell" version that update files check against (minShell in scripts/mark.config.json).
+        versionName = "1.1.0"
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -32,4 +37,10 @@ android {
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.activity:activity-ktx:1.9.3")
+    implementation("androidx.webkit:webkit:1.12.1")
+
+    testImplementation("junit:junit:4.13.2")
+    // Android's org.json is a stub in local unit tests; use the real library there.
+    testImplementation("org.json:json:20240303")
 }
