@@ -562,7 +562,7 @@ function render() {
 function buildToc() {
   const heads = [...document.querySelectorAll('#service h2.group')];
   const toc = document.getElementById('toc');
-  toc.innerHTML = heads.map((h, i) => { h.id = 'g' + i; return `<button type="button" data-jump="g${i}">${esc(h.textContent)}</button>`; }).join('');
+  toc.innerHTML = heads.map((h, i) => { h.id = 'g' + i; return `<button type="button" data-jump="g${i}">${esc(h.textContent.split(' · ').pop())}</button>`; }).join('');
 }
 
 // ---------- mourner's corner ----------
@@ -592,7 +592,6 @@ function nextYahrzeit(passing, afterSunset) {
 }
 
 function renderMourner(c) {
-  const box = document.getElementById('mourner-body');
   const name = document.getElementById('em-name').value.trim();
   const parent = document.getElementById('em-parent').value.trim();
   const fem = document.getElementById('em-female').checked;
@@ -609,7 +608,20 @@ function renderMourner(c) {
     (isToday ? '<b>The yahrzeit is today.</b> ' : '') +
     `Next yahrzeit: <b>${esc(fmt(r.dt))}</b>, starting the evening of ${esc(fmt(eve))}. Light the candle that evening.` +
     (r.shifted ? '<br>The 30th of that month does not occur this year, so this shows the 1st of the next month. Ask your rabbi, since customs differ.' : '');
-  void box;
+}
+
+// ---------- tabs ----------
+const TAB_TITLES = { pray: 'Siddur', mourners: 'Mourners', settings: 'Settings' };
+function showTab(tab) {
+  for (const t of Object.keys(TAB_TITLES)) {
+    document.getElementById('view-' + t).hidden = t !== tab;
+    const btn = document.querySelector(`[data-tab="${t}"]`);
+    if (t === tab) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+  }
+  document.getElementById('seg').hidden = tab !== 'pray';
+  document.getElementById('bar-title').textContent = TAB_TITLES[tab];
+  document.body.classList.toggle('grouped', tab !== 'pray');
+  window.scrollTo({ top: 0 });
 }
 
 // ---------- events ----------
@@ -647,10 +659,7 @@ function bind() {
       renderMourner(context());
     });
   }
-  document.getElementById('jump-mourner').addEventListener('click', () => {
-    const m = document.getElementById('mourner');
-    m.open = true; m.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
+  document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
   try { navigator.wakeLock && navigator.wakeLock.request('screen').catch(() => {}); } catch (e) { /* not available */ }
 }
 
