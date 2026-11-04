@@ -74,13 +74,15 @@ check('old copy landed in handoff-history/', hh().length === 1 && /^HANDOFF-MkI-
 check('backup holds the old text', fs.readFileSync(path.join(target, 'handoff-history', hh()[0]), 'utf8') === oldDoc);
 
 r = installMark(mk2, target, { config: cfg });
-check('HANDOFF.md replaced when incoming Mk II is newer than Mk I', r.handoff.replaced && stampOf() === 2, r.handoff.reason);
+// The temporary mark is the next one after the project's real marks (Mk II right after setup, later higher).
+const tmpName = mk2rec.name;
+check('HANDOFF.md replaced when incoming temporary ' + tmpName + ' is newer than Mk I', r.handoff.replaced && stampOf() === mk2rec.mark, r.handoff.reason);
 check('second backup is named was-MkI', hh().length === 2 && hh().some((f) => /-was-MkI\.md$/.test(f)), hh().join(', '));
 
 const before = fs.readFileSync(path.join(target, 'HANDOFF.md'), 'utf8');
 const nBackups = hh().length;
 r = installMark(mk1, target, { config: cfg });
-check('HANDOFF.md NOT replaced when incoming Mk I is older than installed Mk II', !r.handoff.replaced && stampOf() === 2 && fs.readFileSync(path.join(target, 'HANDOFF.md'), 'utf8') === before, r.handoff.reason);
+check('HANDOFF.md NOT replaced when incoming Mk I is older than installed ' + tmpName, !r.handoff.replaced && stampOf() === mk2rec.mark && fs.readFileSync(path.join(target, 'HANDOFF.md'), 'utf8') === before, r.handoff.reason);
 check('no extra backup made for the refused replacement', hh().length === nBackups);
 
 // 5. refusals
@@ -96,7 +98,7 @@ check('file with wrong magic bytes refused', c2 === 'NOT_A_MARK', String(c2));
 const tooNew = mp.packMark({ mark: 99, name: mp.markName(99), title: 't', notes: '', created: new Date().toISOString(), minShell: '999.0.0' }, { 'HANDOFF.md': '<!-- handoff-mark: 99 -->\n' }, { config: cfg });
 const c3 = throwsCode(() => installMark(tooNew, target, { config: cfg }));
 check('file needing a newer shell refused', c3 === 'TOO_NEW', String(c3));
-check('refusals changed nothing in the target', JSON.stringify(fs.readdirSync(target).sort()) === snapshot && stampOf() === 2);
+check('refusals changed nothing in the target', JSON.stringify(fs.readdirSync(target).sort()) === snapshot && stampOf() === mk2rec.mark);
 
 // 6. the real project was not touched
 check('real marks/history.json unchanged', fs.readFileSync(histPath, 'utf8') === historyBefore);

@@ -165,6 +165,12 @@ Browser/WebView `localStorage`: `siddur.settings` and `siddur.mourner`. Every re
 ## 14. Change log
 Format: `### <date> – <title>` then the four fields **Asked**, **Changed**, **Verified**, **Not done**. Newest first. Mark entries read `### <date> – Mk <Roman> "<title>" – update file` and end with a **Mark file** line.
 
+### 2026-11-04 – Fix verify-mark-system.js for projects past Mk I
+- **Asked** – Part of shipping Mk II: the mark check dropped to 18/21 after Mk II was made.
+- **Changed** – `scripts/verify-mark-system.js`: three checks compared the temporary test mark to the literal number 2. Since it is always the next mark after the real ones (Mk III now), they now compare to its real number, and the labels name it.
+- **Verified** – `node scripts/verify-mark-system.js`: 21/21 (it was 18/21; the failure details already showed correct behaviour, "MkIII is newer than MkI"). Live check of the app path against GitHub: history lists Mk I and Mk II, Mk II downloads (1,867,740 bytes), its sha256 matches the record, it parses with shell 1.1.0 and its page has the updates screen.
+- **Not done** – Mk II itself was committed and pushed before this check was rerun (the commit was chained after the check).
+
 ### 2026-11-04 – Mk II "In-app updates" – update file
 - **Asked** – "The apk doesn't have an update function." Owner chose: self-update with .oleh files, checked only when they tap.
 - **Changed** – Web (`main`): `src/updates.js` and an App Updates section in Settings (installed version, Check for Updates, Install, Install Update File…, versions on this phone with Use This Version), shown only when the app provides `window.SiddurApp`; `.btn-plain` style; `tools/build.js` adds `updates.js`; `scripts/mark.config.json` shellVersion 1.1.0. Android (`android-app`): `MarkFile.kt`, `Updater.kt`, `UpdateBridge.kt`, rewritten `MainActivity.kt` (WebViewAssetLoader origin, bridge, file picker, opening `.oleh` files), `INTERNET` permission, app 1.1.0, `tools/android-assets.js` writes `bundled-mark.json`, unit tests. Security pass (secure skill): `allowBackup="false"`, `usesCleartextTraffic="false"`, release build minified with a keep rule for the bridge. Bug found and fixed while building: `files/*.oleh` inside a Kotlin comment opened a nested comment and broke compilation.
