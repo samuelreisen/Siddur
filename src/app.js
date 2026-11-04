@@ -1,5 +1,5 @@
 // Siddur app: picks the right service for the day and shows or hides each insert by its label.
-/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt, bindUpdates */
+/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt, bindUpdates, bindTheme, bindReader, onTabChange, setTextSize */
 
 const SECTIONS = SIDDUR_DATA.sections;
 const BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.k, s]));
@@ -9,7 +9,9 @@ const keysUnder = prefix => SECTIONS.filter(s => s.k.startsWith(prefix)).map(s =
 const DEFAULTS = {
   mourner: false, minyan: true, shiva: false, israel: false, female: false,
   sayTal: false, english: false, notes: false, translit: true, size: 1.25,
-  tilt: false, tiltStrength: 'hard'
+  tilt: false, tiltStrength: 'hard',
+  theme: 'auto', lineHeight: 1.8, margin: 'narrow',
+  tapTurn: !!window.SiddurApp // edge taps turn pages by default in the Android app only
 };
 function loadSettings() {
   let saved = {};
@@ -621,6 +623,7 @@ function showTab(tab) {
   }
   document.getElementById('seg').hidden = tab !== 'pray';
   document.getElementById('bar-title').textContent = TAB_TITLES[tab];
+  onTabChange(tab);
   document.body.classList.toggle('grouped', tab !== 'pray');
   window.scrollTo({ top: 0 });
 }
@@ -640,9 +643,6 @@ function bind() {
       saveSettings(); render();
     });
   }
-  const size = document.getElementById('opt-size');
-  size.value = settings.size;
-  size.addEventListener('input', () => { settings.size = Number(size.value); saveSettings(); document.documentElement.style.setProperty('--he-size', settings.size + 'rem'); });
   document.getElementById('toc').addEventListener('click', e => {
     const id = e.target.closest('[data-jump]')?.dataset.jump;
     if (id) document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -665,6 +665,8 @@ function bind() {
 }
 
 bind();
+bindTheme();
+bindReader();
 bindTilt();
 bindUpdates();
 render();
