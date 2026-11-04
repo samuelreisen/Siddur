@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
 <script>
 // Paint the saved theme before the page body, so Light, Paper and Dark never flash the wrong colors. Auto is resolved later by theme.js.
-try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
+try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'darkpaper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
 </script>
 <style>/*CSS*/</style>
 
@@ -105,6 +105,7 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
         <div class="seg" role="group" aria-labelledby="theme-label" id="theme-seg">
           <button type="button" id="set-theme-light" data-theme-mode="light">Light</button>
           <button type="button" id="set-theme-paper" data-theme-mode="paper">Paper</button>
+          <button type="button" id="set-theme-darkpaper" data-theme-mode="darkpaper">Dark Paper</button>
           <button type="button" id="set-theme-dark" data-theme-mode="dark">Dark</button>
           <button type="button" id="set-theme-auto" data-theme-mode="auto">Auto</button>
         </div>
@@ -162,6 +163,7 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
   <div class="swatches" role="group" aria-labelledby="sh-theme-label">
     <button type="button" class="swatch" id="sh-theme-light" data-theme-mode="light"><span class="sw sw-light" aria-hidden="true">Aa</span><span class="sw-name">Light</span></button>
     <button type="button" class="swatch" id="sh-theme-paper" data-theme-mode="paper"><span class="sw sw-paper" aria-hidden="true">Aa</span><span class="sw-name">Paper</span></button>
+    <button type="button" class="swatch" id="sh-theme-darkpaper" data-theme-mode="darkpaper"><span class="sw sw-darkpaper" aria-hidden="true">Aa</span><span class="sw-name">Dark Paper</span></button>
     <button type="button" class="swatch" id="sh-theme-dark" data-theme-mode="dark"><span class="sw sw-dark" aria-hidden="true">Aa</span><span class="sw-name">Dark</span></button>
     <button type="button" class="swatch" id="sh-theme-auto" data-theme-mode="auto"><span class="sw sw-auto" aria-hidden="true"><span>Aa</span></span><span class="sw-name">Auto</span></button>
   </div>

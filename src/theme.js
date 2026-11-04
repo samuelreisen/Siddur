@@ -3,11 +3,11 @@
 // Auto follows the host's data-theme if it has one, otherwise the system color scheme (never Paper).
 /* global settings, saveSettings */
 
-const THEME_MODES = ['auto', 'light', 'paper', 'dark'];
+const THEME_MODES = ['auto', 'light', 'paper', 'darkpaper', 'dark'];
 const darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
 function resolveReading(mode) {
-  if (mode === 'light' || mode === 'paper' || mode === 'dark') return mode;
+  if (mode === 'light' || mode === 'paper' || mode === 'darkpaper' || mode === 'dark') return mode;
   const host = document.documentElement.getAttribute('data-theme');
   if (host === 'dark' || host === 'light') return host;
   return darkQuery && darkQuery.matches ? 'dark' : 'light';
@@ -15,12 +15,28 @@ function resolveReading(mode) {
 
 function applyTheme() {
   if (THEME_MODES.indexOf(settings.theme) < 0) settings.theme = 'auto';
-  document.documentElement.dataset.reading = resolveReading(settings.theme);
+  const reading = resolveReading(settings.theme);
+  document.documentElement.dataset.reading = reading;
+  // Paper grain only for the two paper themes.
+  const tex = reading === 'paper' || reading === 'darkpaper' ? paperTextureUrl(reading) : '';
+  if (tex) document.documentElement.style.setProperty('--paper-tex', tex); else document.documentElement.style.removeProperty('--paper-tex');
   document.querySelectorAll('[data-theme-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeMode === settings.theme)));
   // Tell the Android app which mode was chosen so it can paint its window and system bars to match.
   try {
-    if (window.SiddurApp && typeof window.SiddurApp.setAppearance === 'function') window.SiddurApp.setAppearance(settings.theme);
+    if (window.SiddurApp && typeof window.SiddurApp.setAppearance === 'function') window.SiddurApp.setAppearance(modeForApp(settings.theme));
   } catch (e) { /* the app is not ready or does not support it */ }
+}
+
+// App versions before 1.3.0 don't know Dark Paper and would ignore it, leaving the system bars on the old color.
+// For them, report plain Dark (the closest match).
+function modeForApp(mode) {
+  if (mode !== 'darkpaper') return mode;
+  try {
+    const shell = String(JSON.parse(window.SiddurApp.info()).shell || '0').split('.').map(n => parseInt(n, 10) || 0);
+    const need = [1, 3, 0];
+    for (let i = 0; i < 3; i++) { if ((shell[i] || 0) !== need[i]) return (shell[i] || 0) > need[i] ? mode : 'dark'; }
+    return mode;
+  } catch (e) { return 'dark'; }
 }
 
 function setTheme(mode) {

@@ -51,6 +51,17 @@
   --switch-on: rgb(48 209 88); --glass: rgb(22 22 24 / 0.76); --glass-line: rgb(255 255 255 / 0.1);
   color-scheme: dark;
 }
+/* Dark Paper: the same paper, colours flipped. Warm ink-brown page, cream text. Page background #241e17 is shared with the Android app. */
+:root[data-reading="darkpaper"] {
+  --bg: #241e17; --bg-grouped: #1c1812; --bg-cell: #2e271e;
+  --label: #ebe1c9; --label-2: rgb(235 225 201 / 0.72); --label-3: rgb(235 225 201 / 0.42);
+  --fill: rgb(235 225 201 / 0.16); --fill-2: rgb(235 225 201 / 0.11); --separator: rgb(235 225 201 / 0.22);
+  --accent: #7fb2dc; --accent-tint: rgb(127 178 220 / 0.18);
+  --insert: #e6bf6a; --insert-bg: rgb(230 191 106 / 0.16);
+  --mourn: #b9acf0; --mourn-bg: rgb(185 172 240 / 0.16);
+  --switch-on: #6fae5a; --glass: rgb(36 30 23 / 0.82); --glass-line: rgb(235 225 201 / 0.14);
+  color-scheme: dark;
+}
 /* Fallback before theme.js has run: follow the system so there is no flash */
 @media (prefers-color-scheme: dark) {
   :root:not([data-reading]) {
@@ -68,6 +79,7 @@
   :root { --label-2: rgb(60 60 67 / 0.88); --separator: rgb(60 60 67 / 0.5); --insert: rgb(130 70 0); }
   :root[data-reading="paper"] { --label-2: rgb(59 47 30 / 0.9); --separator: rgb(91 70 40 / 0.55); --insert: #6b4000; }
   :root[data-reading="dark"] { --label-2: rgb(235 235 245 / 0.85); --separator: rgb(84 84 88 / 0.9); --insert: rgb(255 214 10); }
+  :root[data-reading="darkpaper"] { --label-2: rgb(235 225 201 / 0.88); --separator: rgb(235 225 201 / 0.5); --insert: #f0cd7e; }
 }
 @media (prefers-contrast: more) and (prefers-color-scheme: dark) {
   :root:not([data-reading]) { --label-2: rgb(235 235 245 / 0.85); --separator: rgb(84 84 88 / 0.9); --insert: rgb(255 214 10); }
@@ -245,7 +257,9 @@ html { touch-action: manipulation; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
 .sheet-title { margin: 0; font-size: 1.0625rem; font-weight: 600; }
 .sheet-label { margin: 10px 0 6px; font-size: 0.8125rem; color: var(--label-2); text-transform: uppercase; letter-spacing: 0.02em; }
-.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.swatch .sw-name { text-align: center; line-height: 1.15; }
+.sw-darkpaper { background: #241e17; color: #ebe1c9; }
 .swatch { border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: var(--label); font-size: 0.8125rem; min-height: 44px; border-radius: 12px; }
 .swatch .sw { position: relative; isolation: isolate; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--book); font-weight: 700; font-size: 1.1875rem; border: 1.5px solid var(--separator); }
 .swatch[aria-pressed="true"] .sw { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4.5px var(--accent); }
@@ -274,3 +288,11 @@ html { touch-action: manipulation; }
 body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.reading-mode .read-progress { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 160ms ease, visibility 0s linear 160ms; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* === Texture: Paper and Dark Paper get a paper grain. theme.js sets --paper-tex (a generated, tileable PNG) only for these two. === */
+.theme-row { flex-wrap: wrap; }
+.theme-row .seg { margin-left: 0; width: 100%; }
+.theme-row .seg button { padding-inline: 6px; flex: 1; }
+:root[data-reading="paper"] body, :root[data-reading="darkpaper"] body { background-image: var(--paper-tex, none); background-size: 256px 256px; }
+:root[data-reading="paper"] .sw-paper, :root[data-reading="darkpaper"] .sw-darkpaper { background-image: var(--paper-tex, none); background-size: 128px 128px; }
+/* === end texture === */

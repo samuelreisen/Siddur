@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
 <script>
 // Paint the saved theme before the page body, so Light, Paper and Dark never flash the wrong colors. Auto is resolved later by theme.js.
-try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
+try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'darkpaper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
 </script>
 <style>/* Layout: iOS-style reading app. Frosted top bar with the service switch, large title,
    prayers set edge to edge in a classic siddur face, frosted tab bar at the bottom. */
@@ -61,6 +61,17 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
   --switch-on: rgb(48 209 88); --glass: rgb(22 22 24 / 0.76); --glass-line: rgb(255 255 255 / 0.1);
   color-scheme: dark;
 }
+/* Dark Paper: the same paper, colours flipped. Warm ink-brown page, cream text. Page background #241e17 is shared with the Android app. */
+:root[data-reading="darkpaper"] {
+  --bg: #241e17; --bg-grouped: #1c1812; --bg-cell: #2e271e;
+  --label: #ebe1c9; --label-2: rgb(235 225 201 / 0.72); --label-3: rgb(235 225 201 / 0.42);
+  --fill: rgb(235 225 201 / 0.16); --fill-2: rgb(235 225 201 / 0.11); --separator: rgb(235 225 201 / 0.22);
+  --accent: #7fb2dc; --accent-tint: rgb(127 178 220 / 0.18);
+  --insert: #e6bf6a; --insert-bg: rgb(230 191 106 / 0.16);
+  --mourn: #b9acf0; --mourn-bg: rgb(185 172 240 / 0.16);
+  --switch-on: #6fae5a; --glass: rgb(36 30 23 / 0.82); --glass-line: rgb(235 225 201 / 0.14);
+  color-scheme: dark;
+}
 /* Fallback before theme.js has run: follow the system so there is no flash */
 @media (prefers-color-scheme: dark) {
   :root:not([data-reading]) {
@@ -78,6 +89,7 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
   :root { --label-2: rgb(60 60 67 / 0.88); --separator: rgb(60 60 67 / 0.5); --insert: rgb(130 70 0); }
   :root[data-reading="paper"] { --label-2: rgb(59 47 30 / 0.9); --separator: rgb(91 70 40 / 0.55); --insert: #6b4000; }
   :root[data-reading="dark"] { --label-2: rgb(235 235 245 / 0.85); --separator: rgb(84 84 88 / 0.9); --insert: rgb(255 214 10); }
+  :root[data-reading="darkpaper"] { --label-2: rgb(235 225 201 / 0.88); --separator: rgb(235 225 201 / 0.5); --insert: #f0cd7e; }
 }
 @media (prefers-contrast: more) and (prefers-color-scheme: dark) {
   :root:not([data-reading]) { --label-2: rgb(235 235 245 / 0.85); --separator: rgb(84 84 88 / 0.9); --insert: rgb(255 214 10); }
@@ -255,7 +267,9 @@ html { touch-action: manipulation; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
 .sheet-title { margin: 0; font-size: 1.0625rem; font-weight: 600; }
 .sheet-label { margin: 10px 0 6px; font-size: 0.8125rem; color: var(--label-2); text-transform: uppercase; letter-spacing: 0.02em; }
-.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.swatch .sw-name { text-align: center; line-height: 1.15; }
+.sw-darkpaper { background: #241e17; color: #ebe1c9; }
 .swatch { border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: var(--label); font-size: 0.8125rem; min-height: 44px; border-radius: 12px; }
 .swatch .sw { position: relative; isolation: isolate; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--book); font-weight: 700; font-size: 1.1875rem; border: 1.5px solid var(--separator); }
 .swatch[aria-pressed="true"] .sw { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4.5px var(--accent); }
@@ -284,6 +298,14 @@ html { touch-action: manipulation; }
 body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.reading-mode .read-progress { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 160ms ease, visibility 0s linear 160ms; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* === Texture: Paper and Dark Paper get a paper grain. theme.js sets --paper-tex (a generated, tileable PNG) only for these two. === */
+.theme-row { flex-wrap: wrap; }
+.theme-row .seg { margin-left: 0; width: 100%; }
+.theme-row .seg button { padding-inline: 6px; flex: 1; }
+:root[data-reading="paper"] body, :root[data-reading="darkpaper"] body { background-image: var(--paper-tex, none); background-size: 256px 256px; }
+:root[data-reading="paper"] .sw-paper, :root[data-reading="darkpaper"] .sw-darkpaper { background-image: var(--paper-tex, none); background-size: 128px 128px; }
+/* === end texture === */
 </style>
 
 <header class="bar" id="bar">
@@ -381,6 +403,7 @@ body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.
         <div class="seg" role="group" aria-labelledby="theme-label" id="theme-seg">
           <button type="button" id="set-theme-light" data-theme-mode="light">Light</button>
           <button type="button" id="set-theme-paper" data-theme-mode="paper">Paper</button>
+          <button type="button" id="set-theme-darkpaper" data-theme-mode="darkpaper">Dark Paper</button>
           <button type="button" id="set-theme-dark" data-theme-mode="dark">Dark</button>
           <button type="button" id="set-theme-auto" data-theme-mode="auto">Auto</button>
         </div>
@@ -438,6 +461,7 @@ body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.
   <div class="swatches" role="group" aria-labelledby="sh-theme-label">
     <button type="button" class="swatch" id="sh-theme-light" data-theme-mode="light"><span class="sw sw-light" aria-hidden="true">Aa</span><span class="sw-name">Light</span></button>
     <button type="button" class="swatch" id="sh-theme-paper" data-theme-mode="paper"><span class="sw sw-paper" aria-hidden="true">Aa</span><span class="sw-name">Paper</span></button>
+    <button type="button" class="swatch" id="sh-theme-darkpaper" data-theme-mode="darkpaper"><span class="sw sw-darkpaper" aria-hidden="true">Aa</span><span class="sw-name">Dark Paper</span></button>
     <button type="button" class="swatch" id="sh-theme-dark" data-theme-mode="dark"><span class="sw sw-dark" aria-hidden="true">Aa</span><span class="sw-name">Dark</span></button>
     <button type="button" class="swatch" id="sh-theme-auto" data-theme-mode="auto"><span class="sw sw-auto" aria-hidden="true"><span>Aa</span></span><span class="sw-name">Auto</span></button>
   </div>
@@ -638,16 +662,80 @@ function dayLabels(c) {
   return out;
 }
 
+// Paper grain for the Paper and Dark Paper themes. A small tileable PNG is drawn once on a canvas (no image files,
+// so it works offline and inside the single-file page) and used as a repeating CSS background over the theme's
+// flat color. The grain is faint on purpose: text contrast is measured against the flat background color.
+
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const paperTextureCache = {};
+
+// kind: 'paper' (dark speckle on a light page) or 'darkpaper' (light speckle on a dark page).
+// Returns a CSS url("data:image/png...") value, or '' when canvas is not available.
+function paperTextureUrl(kind) {
+  if (paperTextureCache[kind] !== undefined) return paperTextureCache[kind];
+  let url = '';
+  try {
+    const N = 256;
+    const canvas = document.createElement('canvas');
+    canvas.width = N;
+    canvas.height = N;
+    const g = canvas.getContext('2d');
+    if (g) {
+      const dark = kind === 'darkpaper';
+      const rand = mulberry32(dark ? 7 : 11);
+      const img = g.createImageData(N, N);
+      const d = img.data;
+      // Fine grain, one value per pixel, so it tiles with no seam.
+      const speck = dark ? [235, 225, 201] : [91, 70, 40];
+      const fleck = dark ? [0, 0, 0] : [255, 255, 255];
+      for (let i = 0; i < N * N; i++) {
+        const r = rand();
+        const o = i * 4;
+        if (r > 0.9965) { d[o] = fleck[0]; d[o + 1] = fleck[1]; d[o + 2] = fleck[2]; d[o + 3] = 70; }       // rare bright or dark fleck
+        else { d[o] = speck[0]; d[o + 1] = speck[1]; d[o + 2] = speck[2]; d[o + 3] = Math.round(rand() * (dark ? 20 : 26)); }
+      }
+      g.putImageData(img, 0, 0);
+      // Soft fibers: short curved strokes, drawn again at the edges so they wrap around the tile.
+      g.lineCap = 'round';
+      for (let f = 0; f < 70; f++) {
+        const x = rand() * N, y = rand() * N, len = 6 + rand() * 18, ang = rand() * Math.PI * 2, bend = (rand() - 0.5) * 8;
+        const ex = x + Math.cos(ang) * len, ey = y + Math.sin(ang) * len;
+        g.strokeStyle = 'rgba(' + speck.join(',') + ',' + (0.05 + rand() * 0.06).toFixed(3) + ')';
+        g.lineWidth = 0.6 + rand() * 0.6;
+        for (const dx of [-N, 0, N]) for (const dy of [-N, 0, N]) {
+          g.beginPath();
+          g.moveTo(x + dx, y + dy);
+          g.quadraticCurveTo((x + ex) / 2 + bend + dx, (y + ey) / 2 - bend + dy, ex + dx, ey + dy);
+          g.stroke();
+        }
+      }
+      url = 'url("' + canvas.toDataURL('image/png') + '")';
+    }
+  } catch (e) { url = ''; }
+  paperTextureCache[kind] = url;
+  return url;
+}
+
 // Appearance modes: Light, Paper, Dark and Auto. The page always carries a concrete data-reading value
 // ('light' | 'paper' | 'dark'), never 'auto'. We do not touch data-theme: the claude.ai host owns that attribute.
 // Auto follows the host's data-theme if it has one, otherwise the system color scheme (never Paper).
 /* global settings, saveSettings */
 
-const THEME_MODES = ['auto', 'light', 'paper', 'dark'];
+const THEME_MODES = ['auto', 'light', 'paper', 'darkpaper', 'dark'];
 const darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
 function resolveReading(mode) {
-  if (mode === 'light' || mode === 'paper' || mode === 'dark') return mode;
+  if (mode === 'light' || mode === 'paper' || mode === 'darkpaper' || mode === 'dark') return mode;
   const host = document.documentElement.getAttribute('data-theme');
   if (host === 'dark' || host === 'light') return host;
   return darkQuery && darkQuery.matches ? 'dark' : 'light';
@@ -655,12 +743,28 @@ function resolveReading(mode) {
 
 function applyTheme() {
   if (THEME_MODES.indexOf(settings.theme) < 0) settings.theme = 'auto';
-  document.documentElement.dataset.reading = resolveReading(settings.theme);
+  const reading = resolveReading(settings.theme);
+  document.documentElement.dataset.reading = reading;
+  // Paper grain only for the two paper themes.
+  const tex = reading === 'paper' || reading === 'darkpaper' ? paperTextureUrl(reading) : '';
+  if (tex) document.documentElement.style.setProperty('--paper-tex', tex); else document.documentElement.style.removeProperty('--paper-tex');
   document.querySelectorAll('[data-theme-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeMode === settings.theme)));
   // Tell the Android app which mode was chosen so it can paint its window and system bars to match.
   try {
-    if (window.SiddurApp && typeof window.SiddurApp.setAppearance === 'function') window.SiddurApp.setAppearance(settings.theme);
+    if (window.SiddurApp && typeof window.SiddurApp.setAppearance === 'function') window.SiddurApp.setAppearance(modeForApp(settings.theme));
   } catch (e) { /* the app is not ready or does not support it */ }
+}
+
+// App versions before 1.3.0 don't know Dark Paper and would ignore it, leaving the system bars on the old color.
+// For them, report plain Dark (the closest match).
+function modeForApp(mode) {
+  if (mode !== 'darkpaper') return mode;
+  try {
+    const shell = String(JSON.parse(window.SiddurApp.info()).shell || '0').split('.').map(n => parseInt(n, 10) || 0);
+    const need = [1, 3, 0];
+    for (let i = 0; i < 3; i++) { if ((shell[i] || 0) !== need[i]) return (shell[i] || 0) > need[i] ? mode : 'dark'; }
+    return mode;
+  } catch (e) { return 'dark'; }
 }
 
 function setTheme(mode) {
