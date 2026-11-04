@@ -1,0 +1,14 @@
+[
+  {
+    "mark": 1,
+    "name": "Mk I",
+    "title": "Smart siddur, first mark",
+    "notes": "Smart Ashkenaz siddur web app, mourner tools, HIG design, build pipeline and handoff system.",
+    "created": "2026-11-04T06:42:01.939Z",
+    "file": "marks/out/Siddur-MkI.oleh",
+    "sha256": "5db0cd8507574e1b8e3c9dc3fbcd01813c74ced8cfb683445bb55051ad2a0ed8",
+    "bytes": 1849958,
+    "minShell": "1.0.0",
+    "handoff": true
+  }
+]
