@@ -137,7 +137,7 @@ Only browser/WebView `localStorage`: `siddur.settings` and `siddur.mourner`. Eve
 
 ## 12. Open items and known quirks (prioritised)
 1. The Android APK has not been run on a physical device.
-2. The CI build for `android-app` failed twice on the setup-android `tools` package; the fix (commit c3cca0c) was pushed and its run had not reported at the time of writing.
+2. CI builds the APK on GitHub (fixed setup-android packages). The artifact upload may fail while the account artifact quota is full; it no longer fails the job.
 3. Not yet supported: Rosh Hashanah and Yom Kippur services (points to a machzor), Selichot, Hoshanot, Yizkor, Birkat HaMazon, Kiddush for festivals, Sefardi or Chabad nusach.
 4. Customs not modeled: Yom HaAtzmaut and Yom Yerushalayim (Tachanun, Hallel), Shushan Purim in Jerusalem, a chatan or brit in the minyan (no Tachanun), Tachanun on Erev Rosh Hashanah at Selichot.
 5. Festival-day services reuse Shabbat Shacharit parts; Shabbat and festival Kedushah wording comes straight from the source sections.
@@ -148,6 +148,12 @@ Only browser/WebView `localStorage`: `siddur.settings` and `siddur.mourner`. Eve
 
 ## 14. Change log
 Format: `### <date> – <title>` then the four fields **Asked**, **Changed**, **Verified**, **Not done**. Newest first. Mark entries read `### <date> – Mk <Roman> "<title>" – update file` and end with a **Mark file** line.
+
+### 2026-11-04 – CI: build passes, artifact upload made non-fatal
+- **Asked** – Automatic: CI failure on PR #1 at commit c3cca0c.
+- **Changed** – On `android-app`, `.github/workflows/android.yml`: the upload step now has `continue-on-error: true` and `retention-days: 7`. Root cause: the build itself succeeded; the upload failed with "Artifact storage quota has been hit", an account-level GitHub limit.
+- **Verified** – The c3cca0c run log shows `BUILD SUCCESSFUL in 2m 46s` and `:app:assembleDebug`, so the SDK package fix works; the only error is the quota message. YAML parses.
+- **Not done** – The quota itself can only be freed by the owner (delete old artifacts in GitHub settings, or wait 6 to 12 hours for usage to recalculate). The CI artifact may be missing until then; `apk/siddur-debug.apk` on the branch is the reliable copy.
 
 ### 2026-11-04 – Verified the mark system
 - **Asked** – Part of setting up handoff and update files (step 9 of the skill).
@@ -172,7 +178,7 @@ Format: `### <date> – <title>` then the four fields **Asked**, **Changed**, **
 - **Asked** – Automatic: CI failure on PR #1.
 - **Changed** – `.github/workflows/android.yml` on `android-app`: `setup-android` now gets `packages: 'platform-tools platforms;android-35 build-tools;35.0.0'`. Root cause: its default list includes the legacy `tools` package, which the runner's sdkmanager 16.0 no longer provides, so the job exited before building.
 - **Verified** – Both failed runs' logs show `Failed to find package 'tools'`. The same three packages are what the local APK build uses. YAML parses.
-- **Not done** – The new CI run had not reported when this was written.
+- **Not done** – Its run then built the APK but hit the artifact quota; see the entry above.
 
 ### 2026-11-04 – Apple HIG redesign
 - **Asked** – Use the apple-hig-design skill on the siddur.
