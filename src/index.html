@@ -112,6 +112,26 @@
         <p class="preview" lang="he" dir="rtl">בָּרוּךְ אַתָּה יְהֹוָה</p>
       </div>
     </div>
+
+    <div id="updates-group" hidden>
+      <p class="list-header">App Updates</p>
+      <div class="group-box list">
+        <div class="row"><span class="row-text"><span class="row-label">Installed Version</span><span class="row-sub" id="upd-current"></span></span></div>
+        <div class="row buttons-row">
+          <button type="button" class="btn-tinted" id="upd-check">Check for Updates</button>
+          <button type="button" class="btn-plain" id="upd-file">Install Update File…</button>
+        </div>
+        <div class="row" id="upd-result-row" hidden>
+          <span class="row-text"><span class="row-label" id="upd-result-title"></span><span class="row-sub" id="upd-result-sub"></span></span>
+          <button type="button" class="btn-tinted" id="upd-install" hidden>Install</button>
+        </div>
+      </div>
+      <p class="list-footer">Updates come from github.com/samuelreisen/Siddur. Nothing downloads until you tap.</p>
+
+      <p class="list-header">Versions on This Phone</p>
+      <div class="group-box list" id="upd-list"></div>
+      <p class="list-footer">The last 5 updates are kept, so you can switch back if one has a problem.</p>
+    </div>
   </section>
 </main>
 

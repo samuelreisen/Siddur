@@ -179,6 +179,10 @@ input[role="switch"]:checked::before { transform: translateX(20px); }
 .result { margin: 0; padding: 4px 16px 16px; font-size: 0.9375rem; color: var(--label); }
 
 .row-warn { color: var(--insert); }
+.buttons-row { flex-wrap: wrap; gap: 8px; }
+.btn-plain { border: 0; background: transparent; color: var(--accent); min-height: 44px; padding: 0 12px; font-weight: 500; cursor: pointer; border-radius: 999px; }
+.btn-plain:active { opacity: 0.6; }
+.btn-tinted:disabled, .btn-plain:disabled { opacity: 0.4; cursor: default; }
 .strength-row { flex-wrap: wrap; }
 .strength-row .seg { margin-left: auto; }
 
@@ -306,6 +310,26 @@ input[role="switch"]:checked::before { transform: translateX(20px); }
         <div class="slider"><span class="a-small" aria-hidden="true">א</span><input type="range" id="opt-size" min="1" max="2.2" step="0.05"><span class="a-large" aria-hidden="true">א</span></div>
         <p class="preview" lang="he" dir="rtl">בָּרוּךְ אַתָּה יְהֹוָה</p>
       </div>
+    </div>
+
+    <div id="updates-group" hidden>
+      <p class="list-header">App Updates</p>
+      <div class="group-box list">
+        <div class="row"><span class="row-text"><span class="row-label">Installed Version</span><span class="row-sub" id="upd-current"></span></span></div>
+        <div class="row buttons-row">
+          <button type="button" class="btn-tinted" id="upd-check">Check for Updates</button>
+          <button type="button" class="btn-plain" id="upd-file">Install Update File…</button>
+        </div>
+        <div class="row" id="upd-result-row" hidden>
+          <span class="row-text"><span class="row-label" id="upd-result-title"></span><span class="row-sub" id="upd-result-sub"></span></span>
+          <button type="button" class="btn-tinted" id="upd-install" hidden>Install</button>
+        </div>
+      </div>
+      <p class="list-footer">Updates come from github.com/samuelreisen/Siddur. Nothing downloads until you tap.</p>
+
+      <p class="list-header">Versions on This Phone</p>
+      <div class="group-box list" id="upd-list"></div>
+      <p class="list-footer">The last 5 updates are kept, so you can switch back if one has a problem.</p>
     </div>
   </section>
 </main>
@@ -604,8 +628,99 @@ function bindTilt() {
   updateTiltUI();
 }
 
+// App Updates screen. Only shown inside the Android app, which provides window.SiddurApp (see android/.../UpdateBridge.kt).
+// The app answers long-running calls by calling window.siddurAppEvent(type, json).
+// Nothing is downloaded until the person taps.
+
+const nativeApp = window.SiddurApp || null;
+
+function appInfo() {
+  try { return JSON.parse(nativeApp.info()); } catch (e) { return null; }
+}
+
+function setUpdateResult(title, sub, installMark) {
+  document.getElementById('upd-result-row').hidden = !title;
+  document.getElementById('upd-result-title').textContent = title || '';
+  document.getElementById('upd-result-sub').textContent = sub || '';
+  const btn = document.getElementById('upd-install');
+  btn.hidden = !installMark;
+  btn.dataset.mark = installMark ? String(installMark) : '';
+  btn.disabled = false;
+}
+
+function setBusy(busy) {
+  for (const id of ['upd-check', 'upd-file', 'upd-install']) document.getElementById(id).disabled = busy;
+  document.querySelectorAll('[data-use-mark]').forEach(b => { b.disabled = busy; });
+}
+
+function renderUpdateInfo() {
+  const info = appInfo();
+  if (!info) return;
+  const cur = info.current;
+  document.getElementById('upd-current').textContent =
+    `${cur.name}${cur.title ? ' · ' + cur.title : ''}${cur.builtIn ? ' (built in)' : ''} · app ${info.shell}`;
+  const list = document.getElementById('upd-list');
+  const rows = [{ mark: 0, name: `Built-in (${info.bundled.name})`, title: 'Came with this app' }].concat(info.installed);
+  list.innerHTML = rows.map(r => {
+    const inUse = r.mark === 0 ? cur.builtIn : (!cur.builtIn && r.mark === cur.mark);
+    return `<div class="row">
+      <span class="row-text"><span class="row-label">${esc(r.name)}</span><span class="row-sub">${esc(r.title || '')}</span></span>
+      ${inUse ? '<span class="badge">In use</span>' : `<button type="button" class="btn-plain" data-use-mark="${r.mark}">Use This Version</button>`}
+    </div>`;
+  }).join('');
+}
+
+function formatSize(bytes) {
+  return bytes ? (bytes / 1048576).toFixed(1) + ' MB' : '';
+}
+
+window.siddurAppEvent = function (type, json) {
+  let r;
+  try { r = JSON.parse(json); } catch (e) { r = { status: 'error', message: 'The app sent an unreadable answer.' }; }
+  setBusy(false);
+  if (type === 'check') {
+    if (r.status === 'uptodate') setUpdateResult('Siddur is up to date', `${r.name} is the newest version.`);
+    else if (r.status === 'available') setUpdateResult(`${r.name} is available`, [r.title, r.notes, formatSize(r.bytes)].filter(Boolean).join(' · '), r.mark);
+    else if (r.status === 'needsApp') setUpdateResult(`${r.name} needs a newer app`, `Install the latest APK from GitHub first (needs app ${r.minShell}, you have ${r.shell}).`);
+    else setUpdateResult('Couldn’t check for updates', r.message || 'Check your connection and try again.');
+  } else if (type === 'install') {
+    if (r.status === 'installed') setUpdateResult(`Installed ${r.name}`, 'Reloading…');
+    else if (r.status === 'cancelled') setUpdateResult('', '');
+    else setUpdateResult('Couldn’t install the update', r.message || 'Try again.');
+    renderUpdateInfo();
+  } else if (type === 'progress') {
+    setBusy(true);
+    setUpdateResult(r.title || 'Working…', r.sub || '');
+  }
+};
+
+function bindUpdates() {
+  if (!nativeApp) return;
+  document.getElementById('updates-group').hidden = false;
+  renderUpdateInfo();
+  document.getElementById('upd-check').addEventListener('click', () => {
+    setBusy(true);
+    setUpdateResult('Checking…', 'Looking for a newer version on GitHub.');
+    nativeApp.check();
+  });
+  document.getElementById('upd-install').addEventListener('click', e => {
+    const mark = Number(e.currentTarget.dataset.mark);
+    if (!mark) return;
+    setBusy(true);
+    setUpdateResult('Downloading…', 'Keep the app open.');
+    nativeApp.install(mark);
+  });
+  document.getElementById('upd-file').addEventListener('click', () => nativeApp.pickFile());
+  document.getElementById('upd-list').addEventListener('click', e => {
+    const b = e.target.closest('[data-use-mark]');
+    if (!b) return;
+    setBusy(true);
+    nativeApp.use(Number(b.dataset.useMark));
+  });
+}
+
 // Siddur app: picks the right service for the day and shows or hides each insert by its label.
-/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt */
+/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt, bindUpdates */
 
 const SECTIONS = SIDDUR_DATA.sections;
 const BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.k, s]));
@@ -1272,5 +1387,6 @@ function bind() {
 
 bind();
 bindTilt();
+bindUpdates();
 render();
 </script>

@@ -1,5 +1,5 @@
 // Siddur app: picks the right service for the day and shows or hides each insert by its label.
-/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt */
+/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt, bindUpdates */
 
 const SECTIONS = SIDDUR_DATA.sections;
 const BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.k, s]));
@@ -666,4 +666,5 @@ function bind() {
 
 bind();
 bindTilt();
+bindUpdates();
 render();
