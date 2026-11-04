@@ -70,6 +70,15 @@ class UpdateBridge(private val activity: MainActivity, private val updater: Upda
         activity.sendEvent("install", result.toString())
     }
 
+    /** The page reports its reading theme. Anything but the four known modes is ignored silently. */
+    @JavascriptInterface
+    fun setAppearance(mode: String?) {
+        val valid = Appearance.parse(mode) ?: return
+        activity.getSharedPreferences(MainActivity.PREFS, android.content.Context.MODE_PRIVATE)
+            .edit().putString(MainActivity.KEY_APPEARANCE, valid).apply()
+        activity.runOnUiThread { activity.applyAppearance(valid) }
+    }
+
     @JavascriptInterface
     fun pickFile() = activity.runOnUiThread { activity.pickUpdateFile() }
 
