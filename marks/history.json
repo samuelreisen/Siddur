@@ -34,5 +34,17 @@
     "bytes": 1886670,
     "minShell": "1.0.0",
     "handoff": true
+  },
+  {
+    "mark": 4,
+    "name": "Mk IV",
+    "title": "Paged book layout",
+    "notes": "Real page-by-page reading with page numbers and running headers, paper texture, Dark Paper theme.",
+    "created": "2026-11-05T03:40:36.523Z",
+    "file": "marks/out/Siddur-MkIV.oleh",
+    "sha256": "fd517901aaa2983bfb67687138ea442bc26068e22af6dc9adbfb193c8d89ca89",
+    "bytes": 1915230,
+    "minShell": "1.0.0",
+    "handoff": true
   }
 ]

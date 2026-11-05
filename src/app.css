@@ -3,6 +3,7 @@
 :root {
   /* Light (default tokens) */
   --bg: #ffffff;                       /* reading surface */
+  --desk: #ececf0;                     /* the area around the page card (Pages layout) */
   --bg-grouped: rgb(242 242 247);      /* settings / mourner lists */
   --bg-cell: #ffffff;
   --label: #000000;
@@ -32,6 +33,7 @@
 }
 /* Paper: warm sepia, like an e-reader */
 :root[data-reading="paper"] {
+  --desk: #e3d8bb;
   --bg: #f4ecd8; --bg-grouped: #ebe2cb; --bg-cell: #faf4e4;
   --label: #3b2f1e; --label-2: rgb(59 47 30 / 0.74); --label-3: rgb(59 47 30 / 0.40);
   --fill: rgb(91 70 40 / 0.16); --fill-2: rgb(91 70 40 / 0.11); --separator: rgb(91 70 40 / 0.28);
@@ -42,6 +44,7 @@
   color-scheme: light;
 }
 :root[data-reading="dark"] {
+  --desk: #0b0b0b;
   --bg: #000000; --bg-grouped: #000000; --bg-cell: rgb(28 28 30);
   --label: #e9e6df; --label-2: rgb(235 235 245 / 0.64); --label-3: rgb(235 235 245 / 0.34);
   --fill: rgb(120 120 128 / 0.36); --fill-2: rgb(118 118 128 / 0.24); --separator: rgb(84 84 88 / 0.6);
@@ -53,6 +56,7 @@
 }
 /* Dark Paper: the same paper, colours flipped. Warm ink-brown page, cream text. Page background #241e17 is shared with the Android app. */
 :root[data-reading="darkpaper"] {
+  --desk: #17130e;
   --bg: #241e17; --bg-grouped: #1c1812; --bg-cell: #2e271e;
   --label: #ebe1c9; --label-2: rgb(235 225 201 / 0.72); --label-3: rgb(235 225 201 / 0.42);
   --fill: rgb(235 225 201 / 0.16); --fill-2: rgb(235 225 201 / 0.11); --separator: rgb(235 225 201 / 0.22);
@@ -65,6 +69,7 @@
 /* Fallback before theme.js has run: follow the system so there is no flash */
 @media (prefers-color-scheme: dark) {
   :root:not([data-reading]) {
+    --desk: #0b0b0b;
     --bg: #000000; --bg-grouped: #000000; --bg-cell: rgb(28 28 30);
     --label: #e9e6df; --label-2: rgb(235 235 245 / 0.64); --label-3: rgb(235 235 245 / 0.34);
     --fill: rgb(120 120 128 / 0.36); --fill-2: rgb(118 118 128 / 0.24); --separator: rgb(84 84 88 / 0.6);
@@ -296,3 +301,66 @@ body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.
 :root[data-reading="paper"] body, :root[data-reading="darkpaper"] body { background-image: var(--paper-tex, none); background-size: 256px 256px; }
 :root[data-reading="paper"] .sw-paper, :root[data-reading="darkpaper"] .sw-darkpaper { background-image: var(--paper-tex, none); background-size: 128px 128px; }
 /* === end texture === */
+
+/* === Pages layout: a printed-book page, turned one at a time. Scroll layout ignores everything under body.pg. === */
+html { --pg-pad: 20px; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.page-head, .page-foot { display: none; }
+.icon-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.bar-inner .icon-btn + .aa-btn { margin-left: -8px; }
+.contents-list { display: flex; flex-direction: column; padding-bottom: 4px; }
+.toc-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 48px; border: 0; border-top: 0.5px solid var(--separator); background: transparent; color: var(--label); font-size: 1.0625rem; text-align: left; padding: 6px 4px; cursor: pointer; }
+.toc-row:first-child { border-top: 0; }
+.toc-row:active { opacity: 0.6; }
+.toc-pg { flex: none; color: var(--label-2); font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+
+body.pg { background: var(--desk); }
+:root[data-reading="paper"] body.pg, :root[data-reading="darkpaper"] body.pg { background-image: none; }
+body.pg .wrap { padding: 0; }
+body.pg .toc { display: none; }
+body.pg .pager { position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + var(--bar-h, 53px)); bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); z-index: 1; display: flex; justify-content: center; padding: 10px max(10px, env(safe-area-inset-right, 0px)) 10px max(10px, env(safe-area-inset-left, 0px)); }
+body.pg.reading-mode .pager { top: env(safe-area-inset-top, 0px); bottom: env(safe-area-inset-bottom, 0px); }
+body.pg .page { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; padding: 14px var(--pg-pad) 0; background-color: var(--bg); background-image: var(--paper-tex, none); background-size: 256px 256px; border-radius: 3px; box-shadow: 0 0 0 0.5px var(--glass-line), 0 1px 2px rgb(0 0 0 / 0.1), 0 8px 24px rgb(0 0 0 / 0.1); }
+body.pg .page::before { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 16px; border-radius: 0 3px 3px 0; background: linear-gradient(to left, rgb(0 0 0 / 0.07), transparent); pointer-events: none; z-index: 2; }
+@media (min-width: 700px) {
+  body.pg .page { flex: 0 1 560px; box-shadow: 1px 0 0 0 var(--bg), 2px 0 0 0 var(--separator), 4px 0 0 0 var(--bg), 5px 0 0 0 var(--separator), 7px 0 0 0 var(--bg), 8px 0 0 0 var(--separator), 0 8px 24px rgb(0 0 0 / 0.12); }
+}
+body.pg .page-head { display: flex; flex: none; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 7px; border-bottom: 0.5px solid var(--separator); font-family: var(--book); font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--label-2); line-height: 1.3; }
+body.pg .ph-left { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body.pg .ph-right { flex: none; font-family: var(--he); font-size: 0.875rem; letter-spacing: 0; text-transform: none; }
+body.pg .page-clip { flex: 1 1 0; min-height: 0; margin-top: 12px; overflow: hidden; overflow: clip; touch-action: none; position: relative; -webkit-user-select: text; user-select: text; }
+body.pg .page-clip.dragging { user-select: none; -webkit-user-select: none; }
+body.pg #view-pray { height: 100%; column-count: 1; column-gap: calc(2 * var(--pg-pad)); column-fill: auto; direction: rtl; transition: transform 220ms ease; will-change: transform; }
+body.pg #view-pray.no-anim, body.pg .page-clip.dragging #view-pray { transition: none; }
+body.pg #view-pray > * { direction: ltr; }
+body.pg .large-title { margin-top: 0; }
+body.pg h2.group, body.pg .sec > summary { break-after: avoid; }
+body.pg .sec > summary { break-inside: avoid; }
+body.pg .sec > summary + * { break-before: avoid; }
+body.pg h2.group { break-inside: avoid; }
+body.pg .sec-note, body.pg .callout, body.pg .chips, body.pg .summary, body.pg .date-row, body.pg .heb-date, body.pg .civil { break-inside: avoid; }
+body.pg .he p, body.pg .en p { orphans: 2; widows: 2; }
+body.pg .service h2.group { margin-top: 24px; }
+body.pg .foot { margin-top: 24px; }
+body.pg .page-foot { display: flex; flex: none; justify-content: center; align-items: flex-start; height: 44px; padding-top: 6px; }
+body.pg.reading-mode .page-foot { height: 28px; }
+body.pg .page-num { font-family: var(--book); font-size: 0.8125rem; letter-spacing: 0.12em; color: var(--label-2); font-variant-numeric: tabular-nums; line-height: 1.3; }
+body.pg .read-progress { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 14px); background: transparent; border-top: 0; padding: 0 16px; line-height: 1.2; }
+@media (max-width: 480px) {
+  body.pg .bar-title { display: none; }
+  body.pg .bar .seg { margin-left: 0; }
+  body.pg .bar .icon-btn { margin-left: auto; }
+}
+@media (max-height: 500px) {
+  body.pg { --tabbar-h: 46px; }
+  body.pg .bar-inner { min-height: 46px; padding-block: 0; }
+  body.pg .tabbar button { min-height: 46px; flex-direction: row; gap: 6px; font-size: 0.75rem; }
+  body.pg .tabbar svg { width: 22px; height: 22px; }
+  body.pg .pager { padding-block: 6px; }
+  body.pg .page { padding-top: 8px; }
+  body.pg .page-clip { margin-top: 8px; }
+  body.pg .page-foot { height: 40px; padding-top: 4px; }
+  body.pg .read-progress { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 10px); }
+}
+@media (prefers-reduced-motion: reduce) { body.pg #view-pray { transition: none !important; } }
+/* === end pages === */

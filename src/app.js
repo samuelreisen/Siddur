@@ -1,5 +1,5 @@
 // Siddur app: picks the right service for the day and shows or hides each insert by its label.
-/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt, bindUpdates, bindTheme, bindReader, onTabChange, setTextSize */
+/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt, bindUpdates, bindTheme, bindReader, onTabChange, setTextSize, pagesBeforeRender, pagesFirst, repaginate */
 
 const SECTIONS = SIDDUR_DATA.sections;
 const BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.k, s]));
@@ -9,7 +9,7 @@ const keysUnder = prefix => SECTIONS.filter(s => s.k.startsWith(prefix)).map(s =
 const DEFAULTS = {
   mourner: false, minyan: true, shiva: false, israel: false, female: false,
   sayTal: false, english: false, notes: false, translit: true, size: 1.25,
-  tilt: false, tiltStrength: 'hard',
+  tilt: false, tiltStrength: 'hard', layout: 'pages',
   theme: 'auto', lineHeight: 1.8, margin: 'narrow',
   tapTurn: !!window.SiddurApp // edge taps turn pages by default in the Android app only
 };
@@ -529,6 +529,7 @@ function todayNotes(c) {
 }
 
 function render() {
+  const pgKeep = pagesBeforeRender(); // where the reader is, so the page can be found again after the text is replaced
   const c = context();
   const items = buildService(c);
   document.documentElement.style.setProperty('--he-size', settings.size + 'rem');
@@ -560,6 +561,7 @@ function render() {
   document.getElementById('service').innerHTML = html;
   buildToc();
   renderMourner(c);
+  repaginate(pgKeep, true);
 }
 
 function buildToc() {
@@ -630,9 +632,9 @@ function showTab(tab) {
 
 // ---------- events ----------
 function bind() {
-  document.querySelectorAll('[data-service]').forEach(b => b.addEventListener('click', () => { state.service = b.dataset.service; render(); window.scrollTo({ top: 0 }); }));
-  document.getElementById('date-input').addEventListener('change', e => { state.date = e.target.value ? fromIso(e.target.value) : null; render(); });
-  document.getElementById('today-btn').addEventListener('click', () => { state.date = null; state.service = null; render(); });
+  document.querySelectorAll('[data-service]').forEach(b => b.addEventListener('click', () => { state.service = b.dataset.service; pagesFirst(); render(); window.scrollTo({ top: 0 }); }));
+  document.getElementById('date-input').addEventListener('change', e => { state.date = e.target.value ? fromIso(e.target.value) : null; pagesFirst(); render(); });
+  document.getElementById('today-btn').addEventListener('click', () => { state.date = null; state.service = null; pagesFirst(); render(); });
   for (const key of ['mourner', 'minyan', 'shiva', 'israel', 'female', 'sayTal', 'english', 'notes', 'translit']) {
     const el = document.getElementById('opt-' + key);
     el.checked = !!settings[key];
