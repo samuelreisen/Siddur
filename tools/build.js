@@ -9,7 +9,7 @@ const read = f => fs.readFileSync(path.join(ROOT, 'src', f), 'utf8');
 
 const data = read('data.json').replace(/<\//g, '<\\/');
 // Script files are joined in this order into one script, so they share top-level names. Missing files are skipped.
-const SCRIPTS = ['calendar.js', 'theme.js', 'reader.js', 'tilt.js', 'updates.js', 'app.js'];
+const SCRIPTS = ['calendar.js', 'texture.js', 'theme.js', 'reader.js', 'tilt.js', 'updates.js', 'app.js'];
 const js = SCRIPTS.filter(f => fs.existsSync(path.join(ROOT, 'src', f))).map(read).join('\n');
 const page = read('index.html')
   .replace('/*CSS*/', () => read('app.css'))

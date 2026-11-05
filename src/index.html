@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
 <script>
 // Paint the saved theme before the page body, so Light, Paper and Dark never flash the wrong colors. Auto is resolved later by theme.js.
-try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
+try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'darkpaper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
 </script>
 <style>/*CSS*/</style>
 
@@ -18,12 +18,17 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
       <button type="button" data-service="mincha">Mincha</button>
       <button type="button" data-service="maariv">Maariv</button>
     </div>
+    <button type="button" class="aa-btn icon-btn" id="toc-btn" aria-label="Contents" aria-haspopup="dialog" aria-expanded="false" aria-controls="contents-sheet" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></button>
     <button type="button" class="aa-btn" id="aa-btn" aria-label="Appearance" aria-haspopup="dialog" aria-expanded="false" aria-controls="appearance-sheet"><span aria-hidden="true">A<small>a</small></span></button>
   </div>
 </header>
 
 <main class="wrap">
-  <!-- Pray -->
+  <!-- Pray. In the Pages layout, #pager is the page card: running header, the text (one column per page), page number. -->
+  <div class="pager" id="pager">
+  <div class="page">
+  <div class="page-head" id="page-head" aria-hidden="true"><span class="ph-left" id="ph-left"></span><span class="ph-right" id="ph-right" lang="he" dir="rtl"></span></div>
+  <div class="page-clip" id="page-clip" role="region" aria-label="Prayer text">
   <section class="view" id="view-pray" aria-label="Pray">
     <div class="hero">
       <h1 class="large-title" id="service-title"></h1>
@@ -46,6 +51,11 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
       <p>The calendar follows Ashkenazi custom. Where your community’s practice differs, follow your community and your rabbi.</p>
     </footer>
   </section>
+  </div>
+  <div class="page-foot"><span class="page-num" id="page-num" aria-hidden="true"></span></div>
+  </div>
+  </div>
+  <div class="sr-only" id="page-live" aria-live="polite"></div>
 
   <!-- Mourners -->
   <section class="view" id="view-mourners" aria-label="Mourners" hidden>
@@ -105,8 +115,16 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
         <div class="seg" role="group" aria-labelledby="theme-label" id="theme-seg">
           <button type="button" id="set-theme-light" data-theme-mode="light">Light</button>
           <button type="button" id="set-theme-paper" data-theme-mode="paper">Paper</button>
+          <button type="button" id="set-theme-darkpaper" data-theme-mode="darkpaper">Dark Paper</button>
           <button type="button" id="set-theme-dark" data-theme-mode="dark">Dark</button>
           <button type="button" id="set-theme-auto" data-theme-mode="auto">Auto</button>
+        </div>
+      </div>
+      <div class="row theme-row">
+        <span class="row-text"><span class="row-label" id="layout-label">Page Layout</span><span class="row-sub">Pages turn like a printed siddur; Scroll is one long list</span></span>
+        <div class="seg" role="group" aria-labelledby="layout-label">
+          <button type="button" id="set-layout-pages" data-layout="pages">Pages</button>
+          <button type="button" id="set-layout-scroll" data-layout="scroll">Scroll</button>
         </div>
       </div>
       <label class="row switch-row" for="opt-english"><span class="row-text"><span class="row-label">English Translation</span><span class="row-sub">Under each prayer where available</span></span><input type="checkbox" role="switch" id="opt-english"></label>
@@ -162,6 +180,7 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
   <div class="swatches" role="group" aria-labelledby="sh-theme-label">
     <button type="button" class="swatch" id="sh-theme-light" data-theme-mode="light"><span class="sw sw-light" aria-hidden="true">Aa</span><span class="sw-name">Light</span></button>
     <button type="button" class="swatch" id="sh-theme-paper" data-theme-mode="paper"><span class="sw sw-paper" aria-hidden="true">Aa</span><span class="sw-name">Paper</span></button>
+    <button type="button" class="swatch" id="sh-theme-darkpaper" data-theme-mode="darkpaper"><span class="sw sw-darkpaper" aria-hidden="true">Aa</span><span class="sw-name">Dark Paper</span></button>
     <button type="button" class="swatch" id="sh-theme-dark" data-theme-mode="dark"><span class="sw sw-dark" aria-hidden="true">Aa</span><span class="sw-name">Dark</span></button>
     <button type="button" class="swatch" id="sh-theme-auto" data-theme-mode="auto"><span class="sw sw-auto" aria-hidden="true"><span>Aa</span></span><span class="sw-name">Auto</span></button>
   </div>
@@ -183,6 +202,20 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
     <button type="button" id="sh-margin-medium" data-margin="medium">Medium</button>
     <button type="button" id="sh-margin-wide" data-margin="wide">Wide</button>
   </div>
+  <p class="sheet-label" id="sh-layout-label">Page Layout</p>
+  <div class="seg wide" role="group" aria-labelledby="sh-layout-label">
+    <button type="button" id="sh-layout-pages" data-layout="pages">Pages</button>
+    <button type="button" id="sh-layout-scroll" data-layout="scroll">Scroll</button>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="contents-backdrop" hidden></div>
+<div class="sheet" id="contents-sheet" role="dialog" aria-modal="true" aria-label="Contents" hidden>
+  <div class="sheet-head">
+    <h2 class="sheet-title">Contents</h2>
+    <button type="button" class="btn-plain" id="contents-done">Done</button>
+  </div>
+  <div class="contents-list" id="contents-list"></div>
 </div>
 
 <div class="page-toast" id="page-toast" role="status" aria-live="polite" hidden></div>

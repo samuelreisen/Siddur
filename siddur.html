@@ -6,13 +6,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&display=swap">
 <script>
 // Paint the saved theme before the page body, so Light, Paper and Dark never flash the wrong colors. Auto is resolved later by theme.js.
-try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
+try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme; if (t === 'light' || t === 'paper' || t === 'darkpaper' || t === 'dark') document.documentElement.dataset.reading = t; } catch (e) {}
 </script>
 <style>/* Layout: iOS-style reading app. Frosted top bar with the service switch, large title,
    prayers set edge to edge in a classic siddur face, frosted tab bar at the bottom. */
 :root {
   /* Light (default tokens) */
   --bg: #ffffff;                       /* reading surface */
+  --desk: #ececf0;                     /* the area around the page card (Pages layout) */
   --bg-grouped: rgb(242 242 247);      /* settings / mourner lists */
   --bg-cell: #ffffff;
   --label: #000000;
@@ -42,6 +43,7 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
 }
 /* Paper: warm sepia, like an e-reader */
 :root[data-reading="paper"] {
+  --desk: #e3d8bb;
   --bg: #f4ecd8; --bg-grouped: #ebe2cb; --bg-cell: #faf4e4;
   --label: #3b2f1e; --label-2: rgb(59 47 30 / 0.74); --label-3: rgb(59 47 30 / 0.40);
   --fill: rgb(91 70 40 / 0.16); --fill-2: rgb(91 70 40 / 0.11); --separator: rgb(91 70 40 / 0.28);
@@ -52,6 +54,7 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
   color-scheme: light;
 }
 :root[data-reading="dark"] {
+  --desk: #0b0b0b;
   --bg: #000000; --bg-grouped: #000000; --bg-cell: rgb(28 28 30);
   --label: #e9e6df; --label-2: rgb(235 235 245 / 0.64); --label-3: rgb(235 235 245 / 0.34);
   --fill: rgb(120 120 128 / 0.36); --fill-2: rgb(118 118 128 / 0.24); --separator: rgb(84 84 88 / 0.6);
@@ -61,9 +64,22 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
   --switch-on: rgb(48 209 88); --glass: rgb(22 22 24 / 0.76); --glass-line: rgb(255 255 255 / 0.1);
   color-scheme: dark;
 }
+/* Dark Paper: the same paper, colours flipped. Warm ink-brown page, cream text. Page background #241e17 is shared with the Android app. */
+:root[data-reading="darkpaper"] {
+  --desk: #17130e;
+  --bg: #241e17; --bg-grouped: #1c1812; --bg-cell: #2e271e;
+  --label: #ebe1c9; --label-2: rgb(235 225 201 / 0.72); --label-3: rgb(235 225 201 / 0.42);
+  --fill: rgb(235 225 201 / 0.16); --fill-2: rgb(235 225 201 / 0.11); --separator: rgb(235 225 201 / 0.22);
+  --accent: #7fb2dc; --accent-tint: rgb(127 178 220 / 0.18);
+  --insert: #e6bf6a; --insert-bg: rgb(230 191 106 / 0.16);
+  --mourn: #b9acf0; --mourn-bg: rgb(185 172 240 / 0.16);
+  --switch-on: #6fae5a; --glass: rgb(36 30 23 / 0.82); --glass-line: rgb(235 225 201 / 0.14);
+  color-scheme: dark;
+}
 /* Fallback before theme.js has run: follow the system so there is no flash */
 @media (prefers-color-scheme: dark) {
   :root:not([data-reading]) {
+    --desk: #0b0b0b;
     --bg: #000000; --bg-grouped: #000000; --bg-cell: rgb(28 28 30);
     --label: #e9e6df; --label-2: rgb(235 235 245 / 0.64); --label-3: rgb(235 235 245 / 0.34);
     --fill: rgb(120 120 128 / 0.36); --fill-2: rgb(118 118 128 / 0.24); --separator: rgb(84 84 88 / 0.6);
@@ -78,6 +94,7 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
   :root { --label-2: rgb(60 60 67 / 0.88); --separator: rgb(60 60 67 / 0.5); --insert: rgb(130 70 0); }
   :root[data-reading="paper"] { --label-2: rgb(59 47 30 / 0.9); --separator: rgb(91 70 40 / 0.55); --insert: #6b4000; }
   :root[data-reading="dark"] { --label-2: rgb(235 235 245 / 0.85); --separator: rgb(84 84 88 / 0.9); --insert: rgb(255 214 10); }
+  :root[data-reading="darkpaper"] { --label-2: rgb(235 225 201 / 0.88); --separator: rgb(235 225 201 / 0.5); --insert: #f0cd7e; }
 }
 @media (prefers-contrast: more) and (prefers-color-scheme: dark) {
   :root:not([data-reading]) { --label-2: rgb(235 235 245 / 0.85); --separator: rgb(84 84 88 / 0.9); --insert: rgb(255 214 10); }
@@ -255,7 +272,9 @@ html { touch-action: manipulation; }
 .sheet-head { display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
 .sheet-title { margin: 0; font-size: 1.0625rem; font-weight: 600; }
 .sheet-label { margin: 10px 0 6px; font-size: 0.8125rem; color: var(--label-2); text-transform: uppercase; letter-spacing: 0.02em; }
-.swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.swatches { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.swatch .sw-name { text-align: center; line-height: 1.15; }
+.sw-darkpaper { background: #241e17; color: #ebe1c9; }
 .swatch { border: 0; background: transparent; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; color: var(--label); font-size: 0.8125rem; min-height: 44px; border-radius: 12px; }
 .swatch .sw { position: relative; isolation: isolate; width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--book); font-weight: 700; font-size: 1.1875rem; border: 1.5px solid var(--separator); }
 .swatch[aria-pressed="true"] .sw { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4.5px var(--accent); }
@@ -284,6 +303,77 @@ html { touch-action: manipulation; }
 body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.reading-mode .read-progress { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 160ms ease, visibility 0s linear 160ms; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* === Texture: Paper and Dark Paper get a paper grain. theme.js sets --paper-tex (a generated, tileable PNG) only for these two. === */
+.theme-row { flex-wrap: wrap; }
+.theme-row .seg { margin-left: 0; width: 100%; }
+.theme-row .seg button { padding-inline: 6px; flex: 1; }
+:root[data-reading="paper"] body, :root[data-reading="darkpaper"] body { background-image: var(--paper-tex, none); background-size: 256px 256px; }
+:root[data-reading="paper"] .sw-paper, :root[data-reading="darkpaper"] .sw-darkpaper { background-image: var(--paper-tex, none); background-size: 128px 128px; }
+/* === end texture === */
+
+/* === Pages layout: a printed-book page, turned one at a time. Scroll layout ignores everything under body.pg. === */
+html { --pg-pad: 20px; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.page-head, .page-foot { display: none; }
+.icon-btn svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.bar-inner .icon-btn + .aa-btn { margin-left: -8px; }
+.contents-list { display: flex; flex-direction: column; padding-bottom: 4px; }
+.toc-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 48px; border: 0; border-top: 0.5px solid var(--separator); background: transparent; color: var(--label); font-size: 1.0625rem; text-align: left; padding: 6px 4px; cursor: pointer; }
+.toc-row:first-child { border-top: 0; }
+.toc-row:active { opacity: 0.6; }
+.toc-pg { flex: none; color: var(--label-2); font-size: 0.9375rem; font-variant-numeric: tabular-nums; }
+
+body.pg { background: var(--desk); }
+:root[data-reading="paper"] body.pg, :root[data-reading="darkpaper"] body.pg { background-image: none; }
+body.pg .wrap { padding: 0; }
+body.pg .toc { display: none; }
+body.pg .pager { position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + var(--bar-h, 53px)); bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); z-index: 1; display: flex; justify-content: center; padding: 10px max(10px, env(safe-area-inset-right, 0px)) 10px max(10px, env(safe-area-inset-left, 0px)); }
+body.pg.reading-mode .pager { top: env(safe-area-inset-top, 0px); bottom: env(safe-area-inset-bottom, 0px); }
+body.pg .page { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; padding: 14px var(--pg-pad) 0; background-color: var(--bg); background-image: var(--paper-tex, none); background-size: 256px 256px; border-radius: 3px; box-shadow: 0 0 0 0.5px var(--glass-line), 0 1px 2px rgb(0 0 0 / 0.1), 0 8px 24px rgb(0 0 0 / 0.1); }
+body.pg .page::before { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 16px; border-radius: 0 3px 3px 0; background: linear-gradient(to left, rgb(0 0 0 / 0.07), transparent); pointer-events: none; z-index: 2; }
+@media (min-width: 700px) {
+  body.pg .page { flex: 0 1 560px; box-shadow: 1px 0 0 0 var(--bg), 2px 0 0 0 var(--separator), 4px 0 0 0 var(--bg), 5px 0 0 0 var(--separator), 7px 0 0 0 var(--bg), 8px 0 0 0 var(--separator), 0 8px 24px rgb(0 0 0 / 0.12); }
+}
+body.pg .page-head { display: flex; flex: none; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 7px; border-bottom: 0.5px solid var(--separator); font-family: var(--book); font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--label-2); line-height: 1.3; }
+body.pg .ph-left { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body.pg .ph-right { flex: none; font-family: var(--he); font-size: 0.875rem; letter-spacing: 0; text-transform: none; }
+body.pg .page-clip { flex: 1 1 0; min-height: 0; margin-top: 12px; overflow: hidden; overflow: clip; touch-action: none; position: relative; -webkit-user-select: text; user-select: text; }
+body.pg .page-clip.dragging { user-select: none; -webkit-user-select: none; }
+body.pg #view-pray { height: 100%; column-count: 1; column-gap: calc(2 * var(--pg-pad)); column-fill: auto; direction: rtl; transition: transform 220ms ease; will-change: transform; }
+body.pg #view-pray.no-anim, body.pg .page-clip.dragging #view-pray { transition: none; }
+body.pg #view-pray > * { direction: ltr; }
+body.pg .large-title { margin-top: 0; }
+body.pg h2.group, body.pg .sec > summary { break-after: avoid; }
+body.pg .sec > summary { break-inside: avoid; }
+body.pg .sec > summary + * { break-before: avoid; }
+body.pg h2.group { break-inside: avoid; }
+body.pg .sec-note, body.pg .callout, body.pg .chips, body.pg .summary, body.pg .date-row, body.pg .heb-date, body.pg .civil { break-inside: avoid; }
+body.pg .he p, body.pg .en p { orphans: 2; widows: 2; }
+body.pg .service h2.group { margin-top: 24px; }
+body.pg .foot { margin-top: 24px; }
+body.pg .page-foot { display: flex; flex: none; justify-content: center; align-items: flex-start; height: 44px; padding-top: 6px; }
+body.pg.reading-mode .page-foot { height: 28px; }
+body.pg .page-num { font-family: var(--book); font-size: 0.8125rem; letter-spacing: 0.12em; color: var(--label-2); font-variant-numeric: tabular-nums; line-height: 1.3; }
+body.pg .read-progress { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 14px); background: transparent; border-top: 0; padding: 0 16px; line-height: 1.2; }
+@media (max-width: 480px) {
+  body.pg .bar-title { display: none; }
+  body.pg .bar .seg { margin-left: 0; }
+  body.pg .bar .icon-btn { margin-left: auto; }
+}
+@media (max-height: 500px) {
+  body.pg { --tabbar-h: 46px; }
+  body.pg .bar-inner { min-height: 46px; padding-block: 0; }
+  body.pg .tabbar button { min-height: 46px; flex-direction: row; gap: 6px; font-size: 0.75rem; }
+  body.pg .tabbar svg { width: 22px; height: 22px; }
+  body.pg .pager { padding-block: 6px; }
+  body.pg .page { padding-top: 8px; }
+  body.pg .page-clip { margin-top: 8px; }
+  body.pg .page-foot { height: 40px; padding-top: 4px; }
+  body.pg .read-progress { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 10px); }
+}
+@media (prefers-reduced-motion: reduce) { body.pg #view-pray { transition: none !important; } }
+/* === end pages === */
 </style>
 
 <header class="bar" id="bar">
@@ -294,12 +384,17 @@ body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.
       <button type="button" data-service="mincha">Mincha</button>
       <button type="button" data-service="maariv">Maariv</button>
     </div>
+    <button type="button" class="aa-btn icon-btn" id="toc-btn" aria-label="Contents" aria-haspopup="dialog" aria-expanded="false" aria-controls="contents-sheet" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r="1"/><circle cx="3.5" cy="12" r="1"/><circle cx="3.5" cy="18" r="1"/></svg></button>
     <button type="button" class="aa-btn" id="aa-btn" aria-label="Appearance" aria-haspopup="dialog" aria-expanded="false" aria-controls="appearance-sheet"><span aria-hidden="true">A<small>a</small></span></button>
   </div>
 </header>
 
 <main class="wrap">
-  <!-- Pray -->
+  <!-- Pray. In the Pages layout, #pager is the page card: running header, the text (one column per page), page number. -->
+  <div class="pager" id="pager">
+  <div class="page">
+  <div class="page-head" id="page-head" aria-hidden="true"><span class="ph-left" id="ph-left"></span><span class="ph-right" id="ph-right" lang="he" dir="rtl"></span></div>
+  <div class="page-clip" id="page-clip" role="region" aria-label="Prayer text">
   <section class="view" id="view-pray" aria-label="Pray">
     <div class="hero">
       <h1 class="large-title" id="service-title"></h1>
@@ -322,6 +417,11 @@ body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.
       <p>The calendar follows Ashkenazi custom. Where your community’s practice differs, follow your community and your rabbi.</p>
     </footer>
   </section>
+  </div>
+  <div class="page-foot"><span class="page-num" id="page-num" aria-hidden="true"></span></div>
+  </div>
+  </div>
+  <div class="sr-only" id="page-live" aria-live="polite"></div>
 
   <!-- Mourners -->
   <section class="view" id="view-mourners" aria-label="Mourners" hidden>
@@ -381,8 +481,16 @@ body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.
         <div class="seg" role="group" aria-labelledby="theme-label" id="theme-seg">
           <button type="button" id="set-theme-light" data-theme-mode="light">Light</button>
           <button type="button" id="set-theme-paper" data-theme-mode="paper">Paper</button>
+          <button type="button" id="set-theme-darkpaper" data-theme-mode="darkpaper">Dark Paper</button>
           <button type="button" id="set-theme-dark" data-theme-mode="dark">Dark</button>
           <button type="button" id="set-theme-auto" data-theme-mode="auto">Auto</button>
+        </div>
+      </div>
+      <div class="row theme-row">
+        <span class="row-text"><span class="row-label" id="layout-label">Page Layout</span><span class="row-sub">Pages turn like a printed siddur; Scroll is one long list</span></span>
+        <div class="seg" role="group" aria-labelledby="layout-label">
+          <button type="button" id="set-layout-pages" data-layout="pages">Pages</button>
+          <button type="button" id="set-layout-scroll" data-layout="scroll">Scroll</button>
         </div>
       </div>
       <label class="row switch-row" for="opt-english"><span class="row-text"><span class="row-label">English Translation</span><span class="row-sub">Under each prayer where available</span></span><input type="checkbox" role="switch" id="opt-english"></label>
@@ -438,6 +546,7 @@ body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.
   <div class="swatches" role="group" aria-labelledby="sh-theme-label">
     <button type="button" class="swatch" id="sh-theme-light" data-theme-mode="light"><span class="sw sw-light" aria-hidden="true">Aa</span><span class="sw-name">Light</span></button>
     <button type="button" class="swatch" id="sh-theme-paper" data-theme-mode="paper"><span class="sw sw-paper" aria-hidden="true">Aa</span><span class="sw-name">Paper</span></button>
+    <button type="button" class="swatch" id="sh-theme-darkpaper" data-theme-mode="darkpaper"><span class="sw sw-darkpaper" aria-hidden="true">Aa</span><span class="sw-name">Dark Paper</span></button>
     <button type="button" class="swatch" id="sh-theme-dark" data-theme-mode="dark"><span class="sw sw-dark" aria-hidden="true">Aa</span><span class="sw-name">Dark</span></button>
     <button type="button" class="swatch" id="sh-theme-auto" data-theme-mode="auto"><span class="sw sw-auto" aria-hidden="true"><span>Aa</span></span><span class="sw-name">Auto</span></button>
   </div>
@@ -459,6 +568,20 @@ body.reading-mode .bar, body.reading-mode .tabbar, body.reading-mode .toc, body.
     <button type="button" id="sh-margin-medium" data-margin="medium">Medium</button>
     <button type="button" id="sh-margin-wide" data-margin="wide">Wide</button>
   </div>
+  <p class="sheet-label" id="sh-layout-label">Page Layout</p>
+  <div class="seg wide" role="group" aria-labelledby="sh-layout-label">
+    <button type="button" id="sh-layout-pages" data-layout="pages">Pages</button>
+    <button type="button" id="sh-layout-scroll" data-layout="scroll">Scroll</button>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="contents-backdrop" hidden></div>
+<div class="sheet" id="contents-sheet" role="dialog" aria-modal="true" aria-label="Contents" hidden>
+  <div class="sheet-head">
+    <h2 class="sheet-title">Contents</h2>
+    <button type="button" class="btn-plain" id="contents-done">Done</button>
+  </div>
+  <div class="contents-list" id="contents-list"></div>
 </div>
 
 <div class="page-toast" id="page-toast" role="status" aria-live="polite" hidden></div>
@@ -638,16 +761,80 @@ function dayLabels(c) {
   return out;
 }
 
+// Paper grain for the Paper and Dark Paper themes. A small tileable PNG is drawn once on a canvas (no image files,
+// so it works offline and inside the single-file page) and used as a repeating CSS background over the theme's
+// flat color. The grain is faint on purpose: text contrast is measured against the flat background color.
+
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const paperTextureCache = {};
+
+// kind: 'paper' (dark speckle on a light page) or 'darkpaper' (light speckle on a dark page).
+// Returns a CSS url("data:image/png...") value, or '' when canvas is not available.
+function paperTextureUrl(kind) {
+  if (paperTextureCache[kind] !== undefined) return paperTextureCache[kind];
+  let url = '';
+  try {
+    const N = 256;
+    const canvas = document.createElement('canvas');
+    canvas.width = N;
+    canvas.height = N;
+    const g = canvas.getContext('2d');
+    if (g) {
+      const dark = kind === 'darkpaper';
+      const rand = mulberry32(dark ? 7 : 11);
+      const img = g.createImageData(N, N);
+      const d = img.data;
+      // Fine grain, one value per pixel, so it tiles with no seam.
+      const speck = dark ? [235, 225, 201] : [91, 70, 40];
+      const fleck = dark ? [0, 0, 0] : [255, 255, 255];
+      for (let i = 0; i < N * N; i++) {
+        const r = rand();
+        const o = i * 4;
+        if (r > 0.9965) { d[o] = fleck[0]; d[o + 1] = fleck[1]; d[o + 2] = fleck[2]; d[o + 3] = 70; }       // rare bright or dark fleck
+        else { d[o] = speck[0]; d[o + 1] = speck[1]; d[o + 2] = speck[2]; d[o + 3] = Math.round(rand() * (dark ? 20 : 26)); }
+      }
+      g.putImageData(img, 0, 0);
+      // Soft fibers: short curved strokes, drawn again at the edges so they wrap around the tile.
+      g.lineCap = 'round';
+      for (let f = 0; f < 70; f++) {
+        const x = rand() * N, y = rand() * N, len = 6 + rand() * 18, ang = rand() * Math.PI * 2, bend = (rand() - 0.5) * 8;
+        const ex = x + Math.cos(ang) * len, ey = y + Math.sin(ang) * len;
+        g.strokeStyle = 'rgba(' + speck.join(',') + ',' + (0.05 + rand() * 0.06).toFixed(3) + ')';
+        g.lineWidth = 0.6 + rand() * 0.6;
+        for (const dx of [-N, 0, N]) for (const dy of [-N, 0, N]) {
+          g.beginPath();
+          g.moveTo(x + dx, y + dy);
+          g.quadraticCurveTo((x + ex) / 2 + bend + dx, (y + ey) / 2 - bend + dy, ex + dx, ey + dy);
+          g.stroke();
+        }
+      }
+      url = 'url("' + canvas.toDataURL('image/png') + '")';
+    }
+  } catch (e) { url = ''; }
+  paperTextureCache[kind] = url;
+  return url;
+}
+
 // Appearance modes: Light, Paper, Dark and Auto. The page always carries a concrete data-reading value
 // ('light' | 'paper' | 'dark'), never 'auto'. We do not touch data-theme: the claude.ai host owns that attribute.
 // Auto follows the host's data-theme if it has one, otherwise the system color scheme (never Paper).
 /* global settings, saveSettings */
 
-const THEME_MODES = ['auto', 'light', 'paper', 'dark'];
+const THEME_MODES = ['auto', 'light', 'paper', 'darkpaper', 'dark'];
 const darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
 function resolveReading(mode) {
-  if (mode === 'light' || mode === 'paper' || mode === 'dark') return mode;
+  if (mode === 'light' || mode === 'paper' || mode === 'darkpaper' || mode === 'dark') return mode;
   const host = document.documentElement.getAttribute('data-theme');
   if (host === 'dark' || host === 'light') return host;
   return darkQuery && darkQuery.matches ? 'dark' : 'light';
@@ -655,12 +842,28 @@ function resolveReading(mode) {
 
 function applyTheme() {
   if (THEME_MODES.indexOf(settings.theme) < 0) settings.theme = 'auto';
-  document.documentElement.dataset.reading = resolveReading(settings.theme);
+  const reading = resolveReading(settings.theme);
+  document.documentElement.dataset.reading = reading;
+  // Paper grain only for the two paper themes.
+  const tex = reading === 'paper' || reading === 'darkpaper' ? paperTextureUrl(reading) : '';
+  if (tex) document.documentElement.style.setProperty('--paper-tex', tex); else document.documentElement.style.removeProperty('--paper-tex');
   document.querySelectorAll('[data-theme-mode]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.themeMode === settings.theme)));
   // Tell the Android app which mode was chosen so it can paint its window and system bars to match.
   try {
-    if (window.SiddurApp && typeof window.SiddurApp.setAppearance === 'function') window.SiddurApp.setAppearance(settings.theme);
+    if (window.SiddurApp && typeof window.SiddurApp.setAppearance === 'function') window.SiddurApp.setAppearance(modeForApp(settings.theme));
   } catch (e) { /* the app is not ready or does not support it */ }
+}
+
+// App versions before 1.3.0 don't know Dark Paper and would ignore it, leaving the system bars on the old color.
+// For them, report plain Dark (the closest match).
+function modeForApp(mode) {
+  if (mode !== 'darkpaper') return mode;
+  try {
+    const shell = String(JSON.parse(window.SiddurApp.info()).shell || '0').split('.').map(n => parseInt(n, 10) || 0);
+    const need = [1, 3, 0];
+    for (let i = 0; i < 3; i++) { if ((shell[i] || 0) !== need[i]) return (shell[i] || 0) > need[i] ? mode : 'dark'; }
+    return mode;
+  } catch (e) { return 'dark'; }
 }
 
 function setTheme(mode) {
@@ -688,6 +891,7 @@ function bindTheme() {
 
 const LINE_HEIGHTS = { compact: 1.55, normal: 1.8, relaxed: 2.1 };
 const MARGINS = { narrow: 16, medium: 28, wide: 44 };
+const PAGE_PAD = { narrow: 20, medium: 30, wide: 42 }; // inner margin of the page card in the Pages layout
 const prefersReducedMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---------- paging (shared with tilt.js) ----------
@@ -699,6 +903,7 @@ function pageStep() {
 
 // dir > 0 is the next page, dir < 0 the previous one.
 function turnPage(dir) {
+  if (inPages()) return pagesTurn(dir);
   const step = pageStep();
   const maxY = document.documentElement.scrollHeight - window.innerHeight;
   if (dir < 0 && window.scrollY <= 1) return pageToast('Already at the top');
@@ -729,6 +934,17 @@ function setTextSize(v) {
   document.documentElement.style.setProperty('--he-size', settings.size + 'rem');
   for (const id of ['opt-size', 'sh-size']) { const el = document.getElementById(id); if (el && Number(el.value) !== settings.size) el.value = settings.size; }
   updateProgress();
+  repaginate();
+}
+
+// Dragging a size slider fires many events, and each one re-flows all the text (about 70 ms here, several times that on a
+// phone). Apply at most one change per 200 ms while dragging, and always apply the last value.
+let sizeTimer = 0, sizeLast = -Infinity;
+function setTextSizeSoon(v) {
+  clearTimeout(sizeTimer);
+  const wait = 200 - (performance.now() - sizeLast);
+  const apply = () => { sizeLast = performance.now(); setTextSize(v); };
+  if (wait <= 0) apply(); else sizeTimer = setTimeout(apply, wait);
 }
 
 function applyReadingLayout() {
@@ -737,6 +953,8 @@ function applyReadingLayout() {
   const root = document.documentElement.style;
   root.setProperty('--he-lh', String(settings.lineHeight));
   root.setProperty('--page-margin', MARGINS[settings.margin] + 'px');
+  root.setProperty('--pg-pad', PAGE_PAD[settings.margin] + 'px');
+  repaginate();
   document.querySelectorAll('[data-lh]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.lh) === settings.lineHeight)));
   document.querySelectorAll('[data-margin]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.margin === settings.margin)));
   updateProgress();
@@ -749,6 +967,7 @@ function openSheet() {
   if (document.getElementById('view-pray').hidden) return;
   document.getElementById('appearance-sheet').hidden = false;
   document.getElementById('sheet-backdrop').hidden = false;
+  closeContents(false);
   document.getElementById('aa-btn').setAttribute('aria-expanded', 'true');
   const active = document.querySelector('.swatch[aria-pressed="true"]') || document.getElementById('sheet-done');
   active.focus();
@@ -782,7 +1001,7 @@ function bindSheet() {
   });
   const slider = document.getElementById('sh-size');
   slider.value = settings.size;
-  slider.addEventListener('input', () => setTextSize(slider.value));
+  slider.addEventListener('input', () => setTextSizeSoon(slider.value));
   document.getElementById('sh-size-down').addEventListener('click', () => setTextSize(settings.size - 0.1));
   document.getElementById('sh-size-up').addEventListener('click', () => setTextSize(settings.size + 0.1));
   document.querySelectorAll('[data-lh]').forEach(b => b.addEventListener('click', () => { settings.lineHeight = Number(b.dataset.lh); saveSettings(); applyReadingLayout(); }));
@@ -800,6 +1019,7 @@ function updateProgress() {
     const pray = !document.getElementById('view-pray').hidden;
     el.hidden = !pray;
     if (!pray) return;
+    if (inPages()) { el.textContent = pagesProgressText(); return; }
     const step = pageStep();
     const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     const y = Math.min(maxY, Math.max(0, window.scrollY));
@@ -813,14 +1033,15 @@ function updateProgress() {
 // ---------- reading mode and tap zones ----------
 function setReadingMode(on) {
   document.body.classList.toggle('reading-mode', !!on);
-  if (on) closeSheet(false);
+  if (on) { closeSheet(false); closeContents(false); }
 }
 
 const TAP_BLOCK = 'summary, button, a, input, label, select, textarea, dialog, [role="dialog"], .sheet-backdrop, .toc, .bar, .tabbar';
 
 function onTap(e) {
   if (!settings.tapTurn || e.defaultPrevented || e.button > 0) return;
-  if (document.getElementById('view-pray').hidden || sheetOpen()) return;
+  if (document.getElementById('view-pray').hidden || sheetOpen() || contentsOpen()) return;
+  if (performance.now() < pg.noClickUntil) return; // the click that ends a swipe
   const t = e.target;
   if (!(t instanceof Element) || t.closest(TAP_BLOCK)) return;
   const sel = window.getSelection && window.getSelection();
@@ -838,7 +1059,9 @@ function onTabChange(tab) {
   document.getElementById('aa-btn').hidden = !pray;
   document.getElementById('read-progress').hidden = !pray; // hide now, not a frame later
   closeSheet(false);
+  closeContents(false);
   setReadingMode(false);
+  applyLayout();
   updateProgress();
 }
 
@@ -854,13 +1077,336 @@ function bindReader() {
   bindSheet();
   const size = document.getElementById('opt-size');
   size.value = settings.size;
-  size.addEventListener('input', () => setTextSize(size.value));
+  size.addEventListener('input', () => setTextSizeSoon(size.value));
   document.getElementById('sh-size').value = settings.size;
+  if (settings.layout !== 'scroll') settings.layout = 'pages';
   applyReadingLayout();
+  bindPages();
+  applyLayout();
   window.addEventListener('scroll', updateProgress, { passive: true });
   window.addEventListener('resize', updateProgress);
   try { new ResizeObserver(updateProgress).observe(document.getElementById('service')); } catch (e) { /* no ResizeObserver */ }
   updateProgress();
+}
+
+// ================= Pages layout =================
+// The Pray view (#view-pray) is one CSS multi-column box, one column per page, inside a fixed-height clip box.
+// It is rtl, so page 1 is at the right and later pages continue to the left. A page is shown by moving the box
+// with translateX (stride = column width + gap). repaginate() measures the page count and where every block lands
+// with ONE forced layout, then goes back to the reader's place.
+const pg = { i: 0, n: 1, stride: 0, colW: 0, h: 0, anchor: null, animUntil: 0, heads: [], pending: undefined, forceFirst: false, raf: 0, drag: null, noClickUntil: 0, lastMs: 0, ro: null };
+const PG_BLOCKS = '.hero, .summary, h2.group, .sec > summary, .sec-note, .callout, .he p, .en p, .translit p, .foot p';
+// Swipes may start on text rows (section titles, labels): the click that ends a swipe is suppressed, so nothing toggles.
+const NO_SWIPE = 'input, button, a, select, textarea';
+const $ = id => document.getElementById(id);
+
+function inPages() { return settings.layout !== 'scroll' && !$('view-pray').hidden; }
+
+// Called by showTab(), setLayout() and bindReader().
+function applyLayout() {
+  const on = inPages();
+  document.body.classList.toggle('pg', on);
+  $('pager').hidden = $('view-pray').hidden;
+  $('toc-btn').hidden = !on;
+  document.querySelectorAll('[data-layout]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.layout === settings.layout)));
+  if (!on) closeContents(false);
+  measureBars();
+  if (on) repaginate();
+}
+
+function setLayout(mode) {
+  settings.layout = mode === 'scroll' ? 'scroll' : 'pages';
+  saveSettings();
+  applyLayout();
+  updateProgress();
+}
+
+function measureBars() {
+  const h = $('bar').offsetHeight;
+  if (h) document.documentElement.style.setProperty('--bar-h', h + 'px');
+}
+
+// keep: undefined = keep the reader's place; 'first' = go to page 1; an object from pagesBeforeRender() = that place.
+function repaginate(keep, sync) {
+  if (keep !== undefined) pg.pending = keep;
+  if (sync) { if (pg.raf) { cancelAnimationFrame(pg.raf); pg.raf = 0; } paginateNow(); return; }
+  if (pg.raf) return;
+  pg.raf = requestAnimationFrame(() => { pg.raf = 0; paginateNow(); });
+}
+
+// Called at the start of render(), before the text is replaced. Returns what to keep.
+function pagesBeforeRender() {
+  if (pg.forceFirst) { pg.forceFirst = false; return 'first'; }
+  if (pg.pending !== undefined && !inPages()) return pg.pending;
+  captureAnchor();
+  return describeAnchor(pg.anchor);
+}
+function pagesFirst() { pg.forceFirst = true; }
+
+// The anchor is the first block at the top of the current page. It is looked up with a hit test while the layout
+// is settled (after a turn or a measurement), so it is still known when a reflow has already moved everything.
+function captureAnchor() {
+  if (!inPages() || performance.now() < pg.animUntil) return;
+  const c = $('page-clip').getBoundingClientRect();
+  if (!c.width) return;
+  const view = $('view-pray');
+  for (let dy = 6; dy < 110; dy += 12) for (const f of [0.85, 0.5, 0.2]) {
+    const el = document.elementFromPoint(c.left + c.width * f, c.top + dy);
+    const b = el && view.contains(el) && el.closest(PG_BLOCKS);
+    if (b) { pg.anchor = b; return; }
+  }
+}
+
+function describeAnchor(el) {
+  if (!el) return null;
+  if (el.matches('h2.group')) return { head: el.textContent };
+  if (el.closest('.foot')) return { foot: true };
+  const sec = el.closest('details.sec');
+  if (!sec || !sec.id) return null;
+  const he = el.matches('.he p') ? [...sec.querySelectorAll('.he p')].indexOf(el) : -1;
+  return { sec: sec.id, he };
+}
+
+function resolveAnchor(d) {
+  if (!d) return null;
+  if (d.foot) return document.querySelector('#view-pray .foot p');
+  if (d.head) return [...document.querySelectorAll('#service h2.group')].find(h => h.textContent === d.head) || null;
+  const sec = document.getElementById(d.sec);
+  if (!sec) return null;
+  if (d.he >= 0) { const ps = sec.querySelectorAll('.he p'); if (ps.length) return ps[Math.min(d.he, ps.length - 1)]; }
+  return sec.querySelector('summary');
+}
+
+function paginateNow() {
+  if (!inPages()) return;
+  const t0 = performance.now();
+  const view = $('view-pray'), clip = $('page-clip');
+  const keep = pg.pending; pg.pending = undefined;
+  const anchorEl = keep === 'first' ? null : keep === undefined ? pg.anchor : resolveAnchor(keep);
+
+  // One forced layout: the first read below lays out the whole multi-column box. Everything after it is a read.
+  const W = clip.clientWidth, H = clip.clientHeight;
+  if (!W || !H) { pg.pending = keep; return; }
+  const gap = 2 * PAGE_PAD[settings.margin];
+  const stride = W + gap;
+  const cr = view.getBoundingClientRect();
+  const clipTop = clip.getBoundingClientRect().top;
+  const pageOf = r => Math.max(0, Math.floor((cr.right - r.right + stride * 0.25) / stride));
+  const heads = [];
+  for (const el of view.querySelectorAll('h2.group')) {
+    const r = el.getBoundingClientRect();
+    if (r.width) heads.push({ el, text: el.textContent, page: pageOf(r), y: r.top - clipTop });
+  }
+  pg.n = Math.max(1, Math.round((view.scrollWidth + gap) / stride) || 1);
+  pg.stride = stride; pg.colW = W; pg.h = H; pg.heads = heads;
+
+  let page = keep === undefined ? Math.min(pg.i, pg.n - 1) : 0; // no usable anchor: stay on the same page number
+  if (anchorEl && anchorEl.isConnected) {
+    let r = anchorEl.getBoundingClientRect();
+    if (!r.width && !r.height) { // it is inside a section that is now closed: use that section's title row
+      const sm = anchorEl.closest('details.sec') && anchorEl.closest('details.sec').querySelector('summary');
+      r = sm ? sm.getBoundingClientRect() : r;
+    }
+    if (r.width || r.height) { page = pageOf(r); pg.anchor = anchorEl; }
+  }
+  pg.i = Math.min(pg.n - 1, page);
+  // Jump without sliding, then let the slide come back next frame.
+  view.classList.add('no-anim');
+  view.style.transform = `translateX(${pg.i * stride}px)`;
+  pg.animUntil = 0;
+  clearTimeout(pg.anchorTimer); pg.anchorTimer = setTimeout(captureAnchor, 80); // the hit test is slow right after a layout, so it waits
+  requestAnimationFrame(() => view.classList.remove('no-anim'));
+  renderPageUI();
+  pg.lastMs = performance.now() - t0;
+}
+
+function serviceName() {
+  const b = document.querySelector('[data-service][aria-pressed="true"]');
+  return b ? b.textContent.trim() : 'Siddur';
+}
+
+// The running header: the first heading in the top part of the page, else the last heading before it.
+function headerFor(i) {
+  const name = serviceName();
+  if (i === 0) return name;
+  const lim = pg.h * 0.35;
+  let h = pg.heads.find(x => x.page === i && x.y <= lim);
+  if (!h) for (let k = pg.heads.length - 1; k >= 0; k--) if (pg.heads[k].page < i) { h = pg.heads[k]; break; }
+  return h ? name + ' · ' + h.text : name;
+}
+
+function shortHebrewDate() {
+  const t = ($('heb-date').textContent || '').trim().split(' ');
+  return t.length > 2 ? t.slice(0, -1).join(' ') : t.join(' ');
+}
+
+function pagesProgressText() {
+  const pct = pg.n > 1 ? Math.round(pg.i / (pg.n - 1) * 100) : 100;
+  return `Page ${pg.i + 1} of ${pg.n} · ${pct}%`;
+}
+
+function renderPageUI() {
+  $('ph-left').textContent = headerFor(pg.i);
+  $('ph-right').textContent = shortHebrewDate();
+  $('page-num').textContent = String(pg.i + 1);
+  $('read-progress').textContent = pagesProgressText();
+}
+
+function goToPage(i, opts = {}) {
+  i = Math.max(0, Math.min(pg.n - 1, i));
+  if (i === pg.i && !opts.force) return false;
+  pg.i = i;
+  const view = $('view-pray');
+  if (opts.instant) { view.classList.add('no-anim'); requestAnimationFrame(() => view.classList.remove('no-anim')); }
+  view.style.transform = `translateX(${i * pg.stride}px)`;
+  if (opts.instant) { pg.animUntil = 0; captureAnchor(); } else { pg.animUntil = performance.now() + 260; clearTimeout(pg.anchorTimer); pg.anchorTimer = setTimeout(captureAnchor, 270); }
+  renderPageUI();
+  if (opts.announce !== false) $('page-live').textContent = `Page ${i + 1} of ${pg.n}`;
+  return true;
+}
+
+function pagesTurn(dir) {
+  const to = pg.i + (dir > 0 ? 1 : -1);
+  if (to < 0) return pageToast('First page');
+  if (to >= pg.n) return pageToast('Last page');
+  goToPage(to);
+  try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) { /* not available */ }
+}
+
+function pageOfElement(el) {
+  const cr = $('view-pray').getBoundingClientRect(), r = el.getBoundingClientRect();
+  return Math.max(0, Math.min(pg.n - 1, Math.floor((cr.right - r.right + pg.stride * 0.25) / pg.stride)));
+}
+
+// ---------- Contents sheet ----------
+function contentsOpen() { return !$('contents-sheet').hidden; }
+
+function openContents() {
+  if (!inPages()) return;
+  closeSheet(false);
+  $('contents-list').innerHTML = pg.heads.map((h, k) =>
+    `<button type="button" class="toc-row" data-head="${k}"><span>${esc(h.text)}</span><span class="toc-pg">p. ${h.page + 1}</span></button>`).join('');
+  $('contents-sheet').hidden = false;
+  $('contents-backdrop').hidden = false;
+  $('toc-btn').setAttribute('aria-expanded', 'true');
+  const first = $('contents-list').querySelector('button') || $('contents-done');
+  first.focus();
+}
+
+function closeContents(restoreFocus = true) {
+  if (!contentsOpen()) return;
+  $('contents-sheet').hidden = true;
+  $('contents-backdrop').hidden = true;
+  const b = $('toc-btn');
+  b.setAttribute('aria-expanded', 'false');
+  if (restoreFocus && !b.hidden) b.focus();
+}
+
+// ---------- input: swipe, keys, focus ----------
+function bindPages() {
+  const clip = $('page-clip'), view = $('view-pray');
+  $('toc-btn').addEventListener('click', () => (contentsOpen() ? closeContents() : openContents()));
+  $('contents-done').addEventListener('click', () => closeContents());
+  $('contents-backdrop').addEventListener('click', () => closeContents());
+  $('contents-list').addEventListener('click', e => {
+    const b = e.target.closest('[data-head]');
+    if (!b) return;
+    const h = pg.heads[Number(b.dataset.head)];
+    closeContents(false);
+    if (h) goToPage(h.page);
+  });
+  document.querySelectorAll('[data-layout]').forEach(b => b.addEventListener('click', () => setLayout(b.dataset.layout)));
+
+  // Swipe: a finger moving right goes to the NEXT page (Hebrew book); moving left goes back.
+  clip.addEventListener('pointerdown', e => {
+    pg.drag = null;
+    if (!inPages() || !e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    if (e.target.closest && e.target.closest(NO_SWIPE)) return;
+    pg.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, state: 'wait', pts: [[e.timeStamp, e.clientX]] };
+  });
+  clip.addEventListener('pointermove', e => {
+    const d = pg.drag;
+    if (!d || d.id !== e.pointerId || d.state === 'no') return;
+    const dx = e.clientX - d.x, dy = e.clientY - d.y;
+    if (d.state === 'wait') {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      pg.noClickUntil = performance.now() + 400; // it was a drag, not a tap
+      if (Math.abs(dy) >= Math.abs(dx)) { d.state = 'no'; return; }
+      d.state = 'drag';
+      clip.classList.add('dragging');
+      try { clip.setPointerCapture(e.pointerId); } catch (err) { /* not capturable */ }
+      try { getSelection().removeAllRanges(); } catch (err) { /* no selection API */ }
+    }
+    d.dx = dx;
+    d.pts.push([e.timeStamp, e.clientX]);
+    if (d.pts.length > 6) d.pts.shift();
+    const edge = (pg.i === 0 && dx < 0) || (pg.i === pg.n - 1 && dx > 0);
+    view.style.transform = `translateX(${pg.i * pg.stride + (edge ? dx * 0.25 : dx)}px)`;
+  });
+  const end = e => {
+    const d = pg.drag;
+    if (!d || d.id !== e.pointerId) return;
+    pg.drag = null;
+    if (d.state !== 'drag') return;
+    pg.noClickUntil = performance.now() + 400;
+    clip.classList.remove('dragging');
+    try { clip.releasePointerCapture(e.pointerId); } catch (err) { /* already released */ }
+    const first = d.pts.find(p => e.timeStamp - p[0] <= 120) || d.pts[0];
+    const v = e.timeStamp > first[0] ? (e.clientX - first[1]) / (e.timeStamp - first[0]) : 0; // px per ms
+    const dx = d.dx;
+    const commit = e.type === 'pointerup' && (Math.abs(dx) > pg.colW * 0.2 || (Math.abs(dx) > 24 && Math.abs(v) > 0.5 && Math.sign(v) === Math.sign(dx)));
+    const to = pg.i + (dx > 0 ? 1 : -1);
+    if (commit && to >= 0 && to < pg.n) goToPage(to);
+    else { view.style.transform = `translateX(${pg.i * pg.stride}px)`; if (commit) pageToast(to < 0 ? 'First page' : 'Last page'); }
+  };
+  clip.addEventListener('pointerup', end);
+  clip.addEventListener('pointercancel', end);
+  document.addEventListener('click', e => { if (performance.now() < pg.noClickUntil && clip.contains(e.target)) { e.stopPropagation(); e.preventDefault(); } }, true);
+
+  // Keyboard.
+  document.addEventListener('keydown', e => {
+    if (contentsOpen()) {
+      if (e.key === 'Escape') { e.preventDefault(); closeContents(); return; }
+      if (e.key === 'Tab') {
+        const items = [...$('contents-sheet').querySelectorAll('button')].filter(x => x.offsetParent !== null);
+        if (!items.length) return;
+        const f = items[0], l = items[items.length - 1], inside = $('contents-sheet').contains(document.activeElement);
+        if (!inside) { e.preventDefault(); f.focus(); }
+        else if (e.shiftKey && document.activeElement === f) { e.preventDefault(); l.focus(); }
+        else if (!e.shiftKey && document.activeElement === l) { e.preventDefault(); f.focus(); }
+      }
+      return;
+    }
+    if (!inPages() || e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || sheetOpen()) return;
+    const t = document.activeElement;
+    if (t && t.closest && t.closest('input, textarea, select, dialog, [role="dialog"], [contenteditable="true"]')) return;
+    const onControl = t && t.closest && t.closest('button, summary, a, [role="switch"]');
+    let dir = 0, jump = -1;
+    if (e.key === 'ArrowLeft' || e.key === 'PageDown') dir = 1;
+    else if (e.key === 'ArrowRight' || e.key === 'PageUp') dir = -1;
+    else if (e.key === ' ' || e.key === 'Spacebar') { if (onControl) return; dir = e.shiftKey ? -1 : 1; }
+    else if (e.key === 'Home') jump = 0;
+    else if (e.key === 'End') jump = pg.n - 1;
+    else return;
+    e.preventDefault();
+    if (jump >= 0) goToPage(jump); else pagesTurn(dir);
+  });
+
+  // Tab key: show the page that holds the focused element, and never let the browser scroll the clip box.
+  view.addEventListener('focusin', e => { if (inPages()) goToPage(pageOfElement(e.target), { instant: true }); clip.scrollLeft = 0; clip.scrollTop = 0; });
+  clip.addEventListener('scroll', () => { clip.scrollLeft = 0; clip.scrollTop = 0; });
+
+  // Reflow triggers.
+  view.addEventListener('toggle', () => repaginate(), true);
+  try {
+    pg.ro = new ResizeObserver(() => { measureBars(); repaginate(); });
+    pg.ro.observe(clip);
+    pg.ro.observe($('bar'));
+  } catch (e) { window.addEventListener('resize', () => { measureBars(); repaginate(); }); }
+  window.addEventListener('orientationchange', () => repaginate());
+  try {
+    if (document.fonts) { document.fonts.ready.then(() => repaginate()); document.fonts.addEventListener('loadingdone', () => repaginate()); }
+  } catch (e) { /* no font events */ }
 }
 
 // Tilt to turn pages: a firm flick of the phone to the left scrolls forward one screen, to the right scrolls back.
@@ -1052,7 +1598,7 @@ function bindUpdates() {
 }
 
 // Siddur app: picks the right service for the day and shows or hides each insert by its label.
-/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt, bindUpdates, bindTheme, bindReader, onTabChange, setTextSize */
+/* global SIDDUR_DATA, dayFacts, dayLabels, hdate, hebrewDateHe, addDays, utcNoon, isoDate, fromIso, isLeapYear, bindTilt, bindUpdates, bindTheme, bindReader, onTabChange, setTextSize, pagesBeforeRender, pagesFirst, repaginate */
 
 const SECTIONS = SIDDUR_DATA.sections;
 const BY_KEY = Object.fromEntries(SECTIONS.map(s => [s.k, s]));
@@ -1062,7 +1608,7 @@ const keysUnder = prefix => SECTIONS.filter(s => s.k.startsWith(prefix)).map(s =
 const DEFAULTS = {
   mourner: false, minyan: true, shiva: false, israel: false, female: false,
   sayTal: false, english: false, notes: false, translit: true, size: 1.25,
-  tilt: false, tiltStrength: 'hard',
+  tilt: false, tiltStrength: 'hard', layout: 'pages',
   theme: 'auto', lineHeight: 1.8, margin: 'narrow',
   tapTurn: !!window.SiddurApp // edge taps turn pages by default in the Android app only
 };
@@ -1582,6 +2128,7 @@ function todayNotes(c) {
 }
 
 function render() {
+  const pgKeep = pagesBeforeRender(); // where the reader is, so the page can be found again after the text is replaced
   const c = context();
   const items = buildService(c);
   document.documentElement.style.setProperty('--he-size', settings.size + 'rem');
@@ -1613,6 +2160,7 @@ function render() {
   document.getElementById('service').innerHTML = html;
   buildToc();
   renderMourner(c);
+  repaginate(pgKeep, true);
 }
 
 function buildToc() {
@@ -1683,9 +2231,9 @@ function showTab(tab) {
 
 // ---------- events ----------
 function bind() {
-  document.querySelectorAll('[data-service]').forEach(b => b.addEventListener('click', () => { state.service = b.dataset.service; render(); window.scrollTo({ top: 0 }); }));
-  document.getElementById('date-input').addEventListener('change', e => { state.date = e.target.value ? fromIso(e.target.value) : null; render(); });
-  document.getElementById('today-btn').addEventListener('click', () => { state.date = null; state.service = null; render(); });
+  document.querySelectorAll('[data-service]').forEach(b => b.addEventListener('click', () => { state.service = b.dataset.service; pagesFirst(); render(); window.scrollTo({ top: 0 }); }));
+  document.getElementById('date-input').addEventListener('change', e => { state.date = e.target.value ? fromIso(e.target.value) : null; pagesFirst(); render(); });
+  document.getElementById('today-btn').addEventListener('click', () => { state.date = null; state.service = null; pagesFirst(); render(); });
   for (const key of ['mourner', 'minyan', 'shiva', 'israel', 'female', 'sayTal', 'english', 'notes', 'translit']) {
     const el = document.getElementById('opt-' + key);
     el.checked = !!settings[key];
