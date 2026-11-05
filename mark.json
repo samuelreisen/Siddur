@@ -1,7 +1,7 @@
 {
-  "mark": 5,
-  "name": "Mk V",
-  "title": "Slider fix",
-  "notes": "The text size slider always keeps its last value.",
-  "created": "2026-11-05T04:28:55.195Z"
+  "mark": 6,
+  "name": "Mk VI",
+  "title": "Page flip",
+  "notes": "Pages turn with a real 3D page flip, with a switch in Settings to turn it off.",
+  "created": "2026-11-05T05:35:29.746Z"
 }

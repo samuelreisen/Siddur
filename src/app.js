@@ -9,7 +9,7 @@ const keysUnder = prefix => SECTIONS.filter(s => s.k.startsWith(prefix)).map(s =
 const DEFAULTS = {
   mourner: false, minyan: true, shiva: false, israel: false, female: false,
   sayTal: false, english: false, notes: false, translit: true, size: 1.25,
-  tilt: false, tiltStrength: 'hard', layout: 'pages',
+  tilt: false, tiltStrength: 'hard', layout: 'pages', pageFlip: true,
   theme: 'auto', lineHeight: 1.8, margin: 'narrow',
   tapTurn: !!window.SiddurApp // edge taps turn pages by default in the Android app only
 };

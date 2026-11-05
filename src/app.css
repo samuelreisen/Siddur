@@ -321,7 +321,7 @@ body.pg .toc { display: none; }
 body.pg .pager { position: fixed; left: 0; right: 0; top: calc(env(safe-area-inset-top, 0px) + var(--bar-h, 53px)); bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); z-index: 1; display: flex; justify-content: center; padding: 10px max(10px, env(safe-area-inset-right, 0px)) 10px max(10px, env(safe-area-inset-left, 0px)); }
 body.pg.reading-mode .pager { top: env(safe-area-inset-top, 0px); bottom: env(safe-area-inset-bottom, 0px); }
 body.pg .page { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; padding: 14px var(--pg-pad) 0; background-color: var(--bg); background-image: var(--paper-tex, none); background-size: 256px 256px; border-radius: 3px; box-shadow: 0 0 0 0.5px var(--glass-line), 0 1px 2px rgb(0 0 0 / 0.1), 0 8px 24px rgb(0 0 0 / 0.1); }
-body.pg .page::before { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 16px; border-radius: 0 3px 3px 0; background: linear-gradient(to left, rgb(0 0 0 / 0.07), transparent); pointer-events: none; z-index: 2; }
+body.pg .page::before, body.pg .flip-front::before { content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 16px; border-radius: 0 3px 3px 0; background: linear-gradient(to left, rgb(0 0 0 / 0.07), transparent); pointer-events: none; z-index: 2; }
 @media (min-width: 700px) {
   body.pg .page { flex: 0 1 560px; box-shadow: 1px 0 0 0 var(--bg), 2px 0 0 0 var(--separator), 4px 0 0 0 var(--bg), 5px 0 0 0 var(--separator), 7px 0 0 0 var(--bg), 8px 0 0 0 var(--separator), 0 8px 24px rgb(0 0 0 / 0.12); }
 }
@@ -330,9 +330,10 @@ body.pg .ph-left { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellip
 body.pg .ph-right { flex: none; font-family: var(--he); font-size: 0.875rem; letter-spacing: 0; text-transform: none; }
 body.pg .page-clip { flex: 1 1 0; min-height: 0; margin-top: 12px; overflow: hidden; overflow: clip; touch-action: none; position: relative; -webkit-user-select: text; user-select: text; }
 body.pg .page-clip.dragging { user-select: none; -webkit-user-select: none; }
-body.pg #view-pray { height: 100%; column-count: 1; column-gap: calc(2 * var(--pg-pad)); column-fill: auto; direction: rtl; transition: transform 220ms ease; will-change: transform; }
+body.pg #view-pray, body.pg #page-ghost { height: 100%; column-count: 1; column-gap: calc(2 * var(--pg-pad)); column-fill: auto; direction: rtl; transition: transform 220ms ease; will-change: transform; }
+body.pg #page-ghost { transition: none; will-change: auto; pointer-events: none; -webkit-user-select: none; user-select: none; }
 body.pg #view-pray.no-anim, body.pg .page-clip.dragging #view-pray { transition: none; }
-body.pg #view-pray > * { direction: ltr; }
+body.pg #view-pray > *, body.pg #page-ghost > * { direction: ltr; }
 body.pg .large-title { margin-top: 0; }
 body.pg h2.group, body.pg .sec > summary { break-after: avoid; }
 body.pg .sec > summary { break-inside: avoid; }
@@ -357,10 +358,33 @@ body.pg .read-progress { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bott
   body.pg .tabbar button { min-height: 46px; flex-direction: row; gap: 6px; font-size: 0.75rem; }
   body.pg .tabbar svg { width: 22px; height: 22px; }
   body.pg .pager { padding-block: 6px; }
-  body.pg .page { padding-top: 8px; }
+  body.pg .page, body.pg .flip-front { padding-top: 8px; }
   body.pg .page-clip { margin-top: 8px; }
   body.pg .page-foot { height: 40px; padding-top: 4px; }
   body.pg .read-progress { bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 10px); }
 }
+/* --- Page flip: a 3D leaf that swings about the spine (the right edge). The stage is built by reader.js and stays hidden until a turn. --- */
+.flip-stage { display: none; }
+body.pg .flip-stage { display: block; position: absolute; inset: 0; z-index: 3; pointer-events: none; clip-path: inset(0 0 100% 0); contain: layout style; perspective: 2000px; perspective-origin: 100% 50%; -webkit-user-select: none; user-select: none; }
+body.pg .flip-stage.on { clip-path: none; }
+body.pg .pager.flipping { overflow-x: clip; }
+.flip-under { position: absolute; inset: 0; overflow: hidden; border-radius: 3px; }
+.flip-cast { position: absolute; left: 0; top: 0; bottom: 0; width: 15%; opacity: 0; background: linear-gradient(to left, rgb(0 0 0 / 1), rgb(0 0 0 / 0.6) 20%, rgb(0 0 0 / 0.22) 52%, rgb(0 0 0 / 0.06) 80%, rgb(0 0 0 / 0)); }
+.flip-leaf { position: absolute; inset: 0; transform-origin: 100% 50%; transform-style: preserve-3d; }
+.flip-front, .flip-back { position: absolute; inset: 0; border-radius: 3px; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; background-color: var(--bg); }
+.flip-front { display: flex; flex-direction: column; padding: 14px var(--pg-pad) 0; background-image: var(--paper-tex, none); background-size: 256px 256px; }
+.flip-back { transform: rotateY(180deg); background-image: linear-gradient(rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.05)), var(--paper-tex, none); background-size: auto, 256px 256px; }
+.flip-back::before { content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 16px; background: linear-gradient(to right, rgb(0 0 0 / 0.09), transparent); }
+.flip-lines { position: absolute; left: var(--pg-pad); right: var(--pg-pad); top: 52px; bottom: 56px; opacity: 0.05; background: repeating-linear-gradient(to bottom, var(--label) 0 1.5px, transparent 1.5px 25px); -webkit-mask-image: linear-gradient(to right, #000 55%, transparent); mask-image: linear-gradient(to right, #000 55%, transparent); }
+.flip-shade, .flip-bshade { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.flip-shade { background: linear-gradient(to bottom, rgb(255 255 255 / 0), rgb(255 255 255 / 0.5) 22%, rgb(255 255 255 / 0.5) 78%, rgb(255 255 255 / 0)) 0 0 / 1.5px 100% no-repeat, linear-gradient(to right, rgb(0 0 0 / 0.26), rgb(0 0 0 / 0.09) 40%, rgb(0 0 0 / 0) 75%), rgb(0 0 0 / 0.15); }
+.flip-bshade { background: linear-gradient(to left, rgb(0 0 0 / 0.28), rgb(0 0 0 / 0.08) 45%, rgb(0 0 0 / 0) 80%), rgb(0 0 0 / 0.16); }
+:root[data-reading="dark"] .flip-shade { background: linear-gradient(to bottom, rgb(255 255 255 / 0), rgb(255 255 255 / 0.6) 22%, rgb(255 255 255 / 0.6) 78%, rgb(255 255 255 / 0)) 0 0 / 1.5px 100% no-repeat, linear-gradient(to right, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0.05) 45%, rgb(255 255 255 / 0) 75%), rgb(255 255 255 / 0.04); }
+:root[data-reading="dark"] .flip-bshade { background: linear-gradient(to left, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0) 70%), rgb(255 255 255 / 0.05); }
+:root[data-reading="dark"] .flip-back { background-image: linear-gradient(rgb(255 255 255 / 0.04), rgb(255 255 255 / 0.04)); }
+:root[data-reading="dark"] .flip-back::before { background: linear-gradient(to right, rgb(255 255 255 / 0.07), transparent); }
+body.pg .flip-stage.on .flip-leaf { will-change: transform; }
+body.pg .flip-stage.on .flip-cast { will-change: transform, opacity; }
+body.pg .flip-stage.on .flip-shade, body.pg .flip-stage.on .flip-bshade { will-change: opacity; }
 @media (prefers-reduced-motion: reduce) { body.pg #view-pray { transition: none !important; } }
 /* === end pages === */
