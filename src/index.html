@@ -131,6 +131,7 @@ try { var t = JSON.parse(localStorage.getItem('siddur.settings') || '{}').theme;
       <label class="row switch-row" for="opt-notes"><span class="row-text"><span class="row-label">Halachic Notes</span><span class="row-sub">The siddur’s small-print guidance, in Hebrew</span></span><input type="checkbox" role="switch" id="opt-notes"></label>
       <label class="row switch-row" for="opt-tilt"><span class="row-text"><span class="row-label">Tilt to Turn Pages</span><span class="row-sub">Flick the phone left for the next page, right to go back</span><span class="row-sub row-warn" id="tilt-status"></span></span><input type="checkbox" role="switch" id="opt-tilt"></label>
       <label class="row switch-row" for="opt-tapTurn"><span class="row-text"><span class="row-label">Tap Screen Edges to Turn Pages</span><span class="row-sub">Left edge for next page, right edge to go back. Tap the middle to hide controls.</span></span><input type="checkbox" role="switch" id="opt-tapTurn"></label>
+      <label class="row switch-row" for="opt-pageFlip"><span class="row-text"><span class="row-label">Page Flip Animation</span><span class="row-sub">Turn pages with a 3D page flip. Off uses a simple slide.</span></span><input type="checkbox" role="switch" id="opt-pageFlip"></label>
       <div class="row strength-row" id="tilt-strength-row" hidden>
         <span class="row-text"><span class="row-label">Flick Strength</span><span class="row-sub">Harder means fewer accidental turns</span></span>
         <div class="seg" role="group" aria-label="Flick strength">

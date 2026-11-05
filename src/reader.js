@@ -45,6 +45,7 @@ function clampSize(v) { return Math.min(2.2, Math.max(1, Math.round(v * 20) / 20
 function setTextSize(v) {
   settings.size = clampSize(Number(v) || 1.25);
   saveSettings();
+  if (typeof ghostDirty === 'function' && inPages()) ghostDirty(); // before the flow changes, so the ghost is not laid out too
   document.documentElement.style.setProperty('--he-size', settings.size + 'rem');
   for (const id of ['opt-size', 'sh-size']) { const el = document.getElementById(id); if (el && Number(el.value) !== settings.size) el.value = settings.size; }
   updateProgress();
@@ -73,6 +74,7 @@ function flushTextSize() {
 function applyReadingLayout() {
   if (!(settings.lineHeight > 1)) settings.lineHeight = LINE_HEIGHTS.normal;
   if (!(settings.margin in MARGINS)) settings.margin = 'narrow';
+  if (typeof ghostDirty === 'function' && inPages()) ghostDirty();
   const root = document.documentElement.style;
   root.setProperty('--he-lh', String(settings.lineHeight));
   root.setProperty('--page-margin', MARGINS[settings.margin] + 'px');
@@ -198,13 +200,16 @@ function bindReader() {
     if (!tap.checked) setReadingMode(false);
   });
   document.addEventListener('click', onTap);
+  const flipSw = document.getElementById('opt-pageFlip');
+  flipSw.checked = settings.pageFlip !== false;
+  flipSw.addEventListener('change', () => { settings.pageFlip = flipSw.checked; saveSettings(); flipFinish(); ghostDirty(); });
   bindSheet();
   const size = document.getElementById('opt-size');
   size.value = settings.size;
   size.addEventListener('input', () => setTextSizeSoon(size.value));
   size.addEventListener('change', flushTextSize);
   window.addEventListener('pagehide', flushTextSize);
-  document.addEventListener('visibilitychange', () => { if (document.hidden) flushTextSize(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) { flushTextSize(); flipFinish(); } });
   document.getElementById('sh-size').value = settings.size;
   if (settings.layout !== 'scroll') settings.layout = 'pages';
   applyReadingLayout();
@@ -221,7 +226,7 @@ function bindReader() {
 // It is rtl, so page 1 is at the right and later pages continue to the left. A page is shown by moving the box
 // with translateX (stride = column width + gap). repaginate() measures the page count and where every block lands
 // with ONE forced layout, then goes back to the reader's place.
-const pg = { i: 0, n: 1, stride: 0, colW: 0, h: 0, anchor: null, animUntil: 0, heads: [], pending: undefined, forceFirst: false, raf: 0, drag: null, noClickUntil: 0, lastMs: 0, ro: null };
+const pg = { i: 0, n: 1, stride: 0, colW: 0, h: 0, anchor: null, animUntil: 0, heads: [], pending: undefined, forceFirst: false, raf: 0, drag: null, noClickUntil: 0, lastMs: 0, ro: null, ghostReady: false, flipping: false };
 const PG_BLOCKS = '.hero, .summary, h2.group, .sec > summary, .sec-note, .callout, .he p, .en p, .translit p, .foot p';
 // Swipes may start on text rows (section titles, labels): the click that ends a swipe is suppressed, so nothing toggles.
 const NO_SWIPE = 'input, button, a, select, textarea';
@@ -236,7 +241,7 @@ function applyLayout() {
   $('pager').hidden = $('view-pray').hidden;
   $('toc-btn').hidden = !on;
   document.querySelectorAll('[data-layout]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.layout === settings.layout)));
-  if (!on) closeContents(false);
+  if (!on) { closeContents(false); flipFinish(); ghostDrop(); }
   measureBars();
   if (on) repaginate();
 }
@@ -263,6 +268,8 @@ function repaginate(keep, sync) {
 
 // Called at the start of render(), before the text is replaced. Returns what to keep.
 function pagesBeforeRender() {
+  flipFinish();
+  ghostDirty();
   if (pg.forceFirst) { pg.forceFirst = false; return 'first'; }
   if (pg.pending !== undefined && !inPages()) return pg.pending;
   captureAnchor();
@@ -306,6 +313,7 @@ function resolveAnchor(d) {
 
 function paginateNow() {
   if (!inPages()) return;
+  ghostDirty(); // first: the ghost copy is removed before the one forced layout below, so it is not laid out as well
   const t0 = performance.now();
   const view = $('view-pray'), clip = $('page-clip');
   const keep = pg.pending; pg.pending = undefined;
@@ -372,16 +380,23 @@ function pagesProgressText() {
   return `Page ${pg.i + 1} of ${pg.n} · ${pct}%`;
 }
 
-function renderPageUI() {
-  $('ph-left').textContent = headerFor(pg.i);
+// The running header and number of the real page card show page i.
+function setPageTexts(i) {
+  $('ph-left').textContent = headerFor(i);
   $('ph-right').textContent = shortHebrewDate();
-  $('page-num').textContent = String(pg.i + 1);
+  $('page-num').textContent = String(i + 1);
+}
+
+function renderPageUI() {
+  setPageTexts(pg.i);
   $('read-progress').textContent = pagesProgressText();
 }
 
 function goToPage(i, opts = {}) {
   i = Math.max(0, Math.min(pg.n - 1, i));
+  flipFinish(); // a turn that is still running snaps to its end first
   if (i === pg.i && !opts.force) return false;
+  if (!opts.instant && Math.abs(i - pg.i) === 1 && flipOK()) { flipTurn(pg.i, i); return true; }
   pg.i = i;
   const view = $('view-pray');
   if (opts.instant) { view.classList.add('no-anim'); requestAnimationFrame(() => view.classList.remove('no-anim')); }
@@ -460,6 +475,7 @@ function bindPages() {
       pg.noClickUntil = performance.now() + 400; // it was a drag, not a tap
       if (Math.abs(dy) >= Math.abs(dx)) { d.state = 'no'; return; }
       d.state = 'drag';
+      flipFinish();
       clip.classList.add('dragging');
       try { clip.setPointerCapture(e.pointerId); } catch (err) { /* not capturable */ }
       try { getSelection().removeAllRanges(); } catch (err) { /* no selection API */ }
@@ -467,6 +483,7 @@ function bindPages() {
     d.dx = dx;
     d.pts.push([e.timeStamp, e.clientX]);
     if (d.pts.length > 6) d.pts.shift();
+    if (flipDrag(dx)) return;
     const edge = (pg.i === 0 && dx < 0) || (pg.i === pg.n - 1 && dx > 0);
     view.style.transform = `translateX(${pg.i * pg.stride + (edge ? dx * 0.25 : dx)}px)`;
   });
@@ -483,6 +500,13 @@ function bindPages() {
     const dx = d.dx;
     const commit = e.type === 'pointerup' && (Math.abs(dx) > pg.colW * 0.2 || (Math.abs(dx) > 24 && Math.abs(v) > 0.5 && Math.sign(v) === Math.sign(dx)));
     const to = pg.i + (dx > 0 ? 1 : -1);
+    if (fl.on && fl.drag) {
+      // Flip: commit when more than 30% of a turn is done, or on a flick in the direction of the drag.
+      const t = fl.edge ? 0 : (fl.fwd ? fl.p : 1 - fl.p);
+      const flick = e.type === 'pointerup' && Math.abs(dx) > 24 && Math.abs(v) > 0.5 && Math.sign(v) === Math.sign(dx);
+      flipRelease(e.type === 'pointerup' && (fl.edge ? commit : (t > 0.3 || flick)), dx, to);
+      return;
+    }
     if (commit && to >= 0 && to < pg.n) goToPage(to);
     else { view.style.transform = `translateX(${pg.i * pg.stride}px)`; if (commit) pageToast(to < 0 ? 'First page' : 'Last page'); }
   };
@@ -535,3 +559,242 @@ function bindPages() {
     if (document.fonts) { document.fonts.ready.then(() => repaginate()); document.fonts.addEventListener('loadingdone', () => repaginate()); }
   } catch (e) { /* no font events */ }
 }
+
+// ================= Page flip =================
+// A turn is a 3D leaf that swings about the spine (the right edge of the page). Everything on screen is a function
+// of ONE number, p = the leaf's angle / 180deg (0 = lying on the page, 1 = flipped over to the right). The same code
+// serves the animated turn and the finger drag.
+//   Layers (all inside .page, in #flip-stage, hidden until a turn):  .flip-under (cast shadow on the page below)
+//   and .flip-leaf = .flip-front (a copy of the page being turned: header, the ghost flow, number, shading) + .flip-back (blank paper).
+//   The page UNDERNEATH is the real page card: the real flow, header and number already show the destination.
+// The leaf front shows a GHOST: a second copy of the flow (cloneNode, no ids, inert) kept laid out and hidden inside the
+// stage. It is built in idle time ~250ms after the flow last changed, and dropped the moment the flow changes again, so
+// turning a page never lays out a flow. If the ghost is not ready (or reduced motion, or the setting is off, or the
+// window is under 240px wide) a turn is the old slide.
+const FLIP_MS = 560, FLIP_PERSP = 2000, GHOST_DELAY = 250;
+const gh = { stage: null, el: null, clip: null, timer: 0, idle: 0, buildMs: 0, x: null };
+const fl = { on: false, fwd: true, dir: 1, edge: false, drag: false, leafPage: 0, src: 0, final: 0, p: 0, raf: 0, announce: false, W: 0, a: 0, strip: 0 };
+const EASE_TURN = makeBezier(0.45, 0, 0.25, 1), EASE_OUT = makeBezier(0.25, 0.6, 0.35, 1);
+
+function makeBezier(x1, y1, x2, y2) {
+  const cx = 3 * x1, bx = 3 * (x2 - x1) - cx, ax = 1 - cx - bx, cy = 3 * y1, by = 3 * (y2 - y1) - cy, ay = 1 - cy - by;
+  const X = u => ((ax * u + bx) * u + cx) * u, Y = u => ((ay * u + by) * u + cy) * u, dX = u => (3 * ax * u + 2 * bx) * u + cx;
+  return t => {
+    if (t <= 0) return 0;
+    if (t >= 1) return 1;
+    let u = t;
+    for (let k = 0; k < 8; k++) { const e = X(u) - t; if (Math.abs(e) < 1e-5) return Y(u); const d = dX(u); if (Math.abs(d) < 1e-6) break; u -= e / d; }
+    let lo = 0, hi = 1; u = t;
+    for (let k = 0; k < 24; k++) { const e = X(u) - t; if (Math.abs(e) < 1e-5) break; if (e > 0) hi = u; else lo = u; u = (lo + hi) / 2; }
+    return Y(u);
+  };
+}
+
+// ---------- the ghost ----------
+function ghostWanted() {
+  return inPages() && settings.pageFlip !== false && !prefersReducedMotion() && window.innerWidth >= 240 && !document.hidden;
+}
+
+// The stage: built once (lazily), lives inside the page card, hidden until a turn. Elements have classes, no ids, except the stage itself.
+function ensureStage() {
+  if (gh.stage && gh.stage.isConnected) return gh.stage;
+  const page = $('page-clip').parentNode;
+  const st = document.createElement('div');
+  st.id = 'flip-stage'; st.className = 'flip-stage';
+  st.setAttribute('aria-hidden', 'true'); st.setAttribute('inert', '');
+  st.innerHTML = '<div class="flip-under"><div class="flip-cast"></div></div>' +
+    '<div class="flip-leaf"><div class="flip-front">' +
+    '<div class="page-head"><span class="ph-left"></span><span class="ph-right" lang="he" dir="rtl"></span></div>' +
+    '<div class="page-clip"></div>' +
+    '<div class="page-foot"><span class="page-num"></span></div>' +
+    '<div class="flip-shade"></div></div>' +
+    '<div class="flip-back"><div class="flip-lines"></div><div class="flip-bshade"></div></div></div>';
+  page.appendChild(st);
+  const q = c => st.querySelector(c);
+  gh.stage = st; gh.clip = q('.flip-front .page-clip');
+  gh.x = { leaf: q('.flip-leaf'), cast: q('.flip-cast'), shade: q('.flip-shade'), bshade: q('.flip-bshade'), hl: q('.flip-front .ph-left'), hr: q('.flip-front .ph-right'), num: q('.flip-front .page-num') };
+  return st;
+}
+
+function ghostDrop() { // remove everything (layout is not Pages, tab hidden, setting off)
+  clearTimeout(gh.timer); gh.timer = 0;
+  if (gh.idle && window.cancelIdleCallback) { try { cancelIdleCallback(gh.idle); } catch (e) { /* ignore */ } }
+  gh.idle = 0;
+  if (gh.stage) gh.stage.remove();
+  gh.stage = gh.el = gh.clip = gh.x = null;
+  pg.ghostReady = false;
+}
+
+// The flow changed. The ghost copy is removed at once (so it costs no second layout while the flow keeps changing)
+// and rebuilt in idle time GHOST_DELAY ms after the last change.
+function ghostDirty() {
+  flipFinish();
+  pg.ghostReady = false;
+  if (gh.el) { gh.el.remove(); gh.el = null; }
+  clearTimeout(gh.timer); gh.timer = 0;
+  if (gh.idle && window.cancelIdleCallback) { try { cancelIdleCallback(gh.idle); } catch (e) { /* ignore */ } }
+  gh.idle = 0;
+  if (!ghostWanted()) { if (gh.stage) ghostDrop(); return; }
+  gh.timer = setTimeout(() => {
+    gh.timer = 0;
+    if (window.requestIdleCallback) gh.idle = requestIdleCallback(() => { gh.idle = 0; buildGhost(); }, { timeout: 1500 });
+    else gh.idle = setTimeout(() => { gh.idle = 0; buildGhost(); }, 0);
+  }, GHOST_DELAY);
+}
+
+function buildGhost() {
+  if (!ghostWanted() || pg.raf || pg.pending !== undefined || fl.on) return; // a repaginate is on its way: it marks the ghost dirty again
+  const t0 = performance.now();
+  const view = $('view-pray');
+  ensureStage();
+  const c = view.cloneNode(true);
+  c.id = 'page-ghost'; c.removeAttribute('aria-label'); c.removeAttribute('hidden'); c.classList.remove('no-anim');
+  c.style.transform = '';
+  c.setAttribute('aria-hidden', 'true'); c.setAttribute('inert', '');
+  for (const e of c.querySelectorAll('[id]')) e.removeAttribute('id');
+  for (const e of c.querySelectorAll('[for],[aria-controls],[aria-labelledby],[aria-describedby],[name],[tabindex]'))
+    for (const a of ['for', 'aria-controls', 'aria-labelledby', 'aria-describedby', 'name', 'tabindex']) e.removeAttribute(a);
+  const src = view.querySelectorAll('input'), dst = c.querySelectorAll('input');
+  src.forEach((e, k) => { if (dst[k]) { dst[k].value = e.value; dst[k].checked = e.checked; } });
+  gh.clip.replaceChildren(c);
+  gh.x.hl.textContent = $('ph-left').textContent; gh.x.hr.textContent = $('ph-right').textContent; gh.x.num.textContent = $('page-num').textContent; // same header height as the real card, so the ghost never reflows when a flip starts
+  gh.el = c;
+  pg.ghostReady = true;
+  gh.buildMs = performance.now() - t0; // the clone itself; the ghost's layout happens at the next frame
+}
+
+// ---------- the flip ----------
+function flipOK() {
+  return !!(pg.ghostReady && gh.el && gh.el.isConnected && ghostWanted() && pg.n > 1);
+}
+
+function flipBegin(leafPage, underPage, fwd, edge, src) {
+  const x = gh.x, st = gh.stage;
+  const W = st.parentNode.getBoundingClientRect().width; // the only read, before any write
+  fl.W = W; fl.a = 0.2 * W; fl.strip = 0.15 * W;
+  fl.on = true; pg.flipping = true; fl.fwd = fwd; fl.edge = !!edge; fl.leafPage = leafPage; fl.src = src; fl.p = fwd ? 0 : 1; fl.announce = false;
+  pg.animUntil = performance.now() + 60000; // no anchor lookups while it runs
+  const view = $('view-pray');
+  gh.el.style.transform = `translateX(${leafPage * pg.stride}px)`;
+  x.hl.textContent = headerFor(leafPage); x.hr.textContent = shortHebrewDate(); x.num.textContent = String(leafPage + 1);
+  x.cast.style.width = fl.strip + 'px';
+  st.style.perspective = FLIP_PERSP + 'px';
+  view.classList.add('no-anim');
+  view.style.transform = `translateX(${underPage * pg.stride}px)`;
+  setPageTexts(underPage);
+  $('pager').classList.add('flipping');
+  st.classList.add('on');
+  flipSetP(fl.p);
+}
+
+// All of the look, from p alone. Only transform and opacity are written.
+function flipSetP(p) {
+  fl.p = p;
+  const x = gh.x;
+  if (!x) return;
+  const th = p * Math.PI, s = Math.sin(th), c = Math.cos(th), W = fl.W;
+  // After the half-way point the hinge slides in from the page edge and back out, so the blank back is seen on the page.
+  const hinge = p > 0.5 ? -fl.a * Math.sin(2 * th - Math.PI) : 0;
+  const z = W * s, k = FLIP_PERSP / Math.max(1, FLIP_PERSP - z);
+  const edge = Math.min((hinge - W * c) * k, hinge); // the leaf's left-most visible x, from the spine
+  x.leaf.style.transform = `translateX(${hinge.toFixed(2)}px) rotateY(${(p * 180).toFixed(3)}deg)`;
+  x.shade.style.opacity = s.toFixed(4);
+  x.bshade.style.opacity = s.toFixed(4);
+  x.cast.style.opacity = (0.28 * s).toFixed(4);
+  x.cast.style.transform = `translateX(${(W + edge - fl.strip).toFixed(2)}px)`;
+}
+
+// Back to a quiet DOM, with the real page showing `page`.
+function flipFinalize(page, announce) {
+  if (fl.raf) { cancelAnimationFrame(fl.raf); fl.raf = 0; }
+  const x = gh.x;
+  fl.on = false; fl.drag = false; pg.flipping = false;
+  const view = $('view-pray');
+  view.style.transform = `translateX(${page * pg.stride}px)`;
+  setPageTexts(page);
+  $('read-progress').textContent = pagesProgressText();
+  if (x) {
+    gh.stage.classList.remove('on');
+    x.leaf.style.transform = ''; x.shade.style.opacity = ''; x.bshade.style.opacity = '';
+    x.cast.style.opacity = ''; x.cast.style.transform = ''; x.cast.style.width = '';
+    gh.stage.style.perspective = '';
+  }
+  $('pager').classList.remove('flipping');
+  pg.animUntil = 0;
+  clearTimeout(pg.anchorTimer); pg.anchorTimer = setTimeout(captureAnchor, 80);
+  requestAnimationFrame(() => { if (!fl.on) view.classList.remove('no-anim'); });
+  if (announce) $('page-live').textContent = `Page ${pg.i + 1} of ${pg.n}`;
+}
+
+// Interruption: whatever is running snaps to its end state at once.
+function flipFinish() { if (fl.on) flipFinalize(fl.final, false); }
+
+function flipRun(toP, dur, ease, final, announce) {
+  if (fl.raf) cancelAnimationFrame(fl.raf);
+  fl.final = final; fl.announce = announce; fl.drag = false;
+  const from = fl.p, t0 = performance.now();
+  const tick = () => {
+    const u = Math.min(1, (performance.now() - t0) / dur);
+    flipSetP(from + (toP - from) * ease(u));
+    if (u < 1) fl.raf = requestAnimationFrame(tick);
+    else { fl.raf = 0; flipFinalize(final, announce); }
+  };
+  fl.raf = requestAnimationFrame(tick);
+}
+
+// An animated turn of exactly one page (tap, key, tilt, button).
+function flipTurn(src, dst) {
+  const fwd = dst > src;
+  pg.i = dst;
+  flipBegin(fwd ? src : dst, fwd ? dst : src, fwd, false, src);
+  $('read-progress').textContent = pagesProgressText();
+  flipRun(fwd ? 1 : 0, FLIP_MS, EASE_TURN, dst, true);
+}
+
+// ---------- the finger ----------
+// dx > 0 (finger moving right) goes to the next page. Returns false when there is no flip (the old slide follows the finger).
+function flipDrag(dx) {
+  if (!fl.on && !flipOK()) return false;
+  if (fl.on && !fl.drag) return false;
+  const dir = dx > 0 ? 1 : -1, to = pg.i + dir, ok = to >= 0 && to < pg.n;
+  if (fl.on && (fl.dir !== dir || fl.edge === ok)) flipFinalize(fl.src, false); // the finger changed direction: start over
+  if (!fl.on) {
+    if (ok) flipBegin(dir > 0 ? pg.i : to, dir > 0 ? to : pg.i, dir > 0, false, pg.i);
+    else flipBegin(pg.i, pg.i, true, true, pg.i);
+    fl.dir = dir; fl.drag = true; fl.final = pg.i; // cancelled unless the finger commits
+  }
+  const t = Math.min(1, Math.abs(dx) / (0.9 * fl.W)); // 0..1 of "one turn"; the page is fully over at 0.9 of its width
+  const p = fl.edge ? Math.min(0.04, t * 0.12) : (fl.fwd ? t : 1 - t);
+  flipSetP(p);
+  return true;
+}
+
+function flipRelease(commit, dx, to) {
+  fl.drag = false;
+  const ok = !fl.edge && to >= 0 && to < pg.n;
+  if (commit && ok) {
+    pg.i = to;
+    $('read-progress').textContent = pagesProgressText();
+    const end = fl.fwd ? 1 : 0, left = Math.abs(end - fl.p);
+    flipRun(end, Math.max(200, FLIP_MS * left), EASE_OUT, to, true);
+    try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) { /* not available */ }
+  } else {
+    if (commit) pageToast(to < 0 ? 'First page' : 'Last page');
+    const back = fl.edge || !fl.fwd ? (fl.edge ? 0 : 1) : 0;
+    flipRun(back, Math.max(200, FLIP_MS * Math.abs(back - fl.p)), EASE_OUT, pg.i, false);
+  }
+}
+
+// ---------- test hooks: freeze the flip at turn progress t (0 = start, 1 = done) ----------
+function flipPreview(dir, t) {
+  if (fl.on && fl.dir !== dir) flipFinalize(pg.i, false);
+  if (!fl.on) {
+    const to = pg.i + (dir > 0 ? 1 : -1);
+    if (!flipOK() || to < 0 || to >= pg.n) return false;
+    flipBegin(dir > 0 ? pg.i : to, dir > 0 ? to : pg.i, dir > 0, false, pg.i);
+    fl.dir = dir; fl.drag = true; fl.final = pg.i;
+  }
+  flipSetP(fl.fwd ? t : 1 - t);
+  return true;
+}
+function flipClear() { if (fl.on) flipFinalize(pg.i, false); }

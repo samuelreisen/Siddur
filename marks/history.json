@@ -58,5 +58,17 @@
     "bytes": 1916287,
     "minShell": "1.0.0",
     "handoff": true
+  },
+  {
+    "mark": 6,
+    "name": "Mk VI",
+    "title": "Page flip",
+    "notes": "Pages turn with a real 3D page flip, with a switch in Settings to turn it off.",
+    "created": "2026-11-05T05:35:29.746Z",
+    "file": "marks/out/Siddur-MkVI.oleh",
+    "sha256": "4a4e32d08549c79b675da891f5d8e81a1486648658bed28f74975dcc42968b48",
+    "bytes": 1933556,
+    "minShell": "1.0.0",
+    "handoff": true
   }
 ]
