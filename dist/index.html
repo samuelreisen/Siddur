@@ -945,12 +945,21 @@ function setTextSize(v) {
 
 // Dragging a size slider fires many events, and each one re-flows all the text (about 70 ms here, several times that on a
 // phone). Apply at most one change per 200 ms while dragging, and always apply the last value.
-let sizeTimer = 0, sizeLast = -Infinity;
+let sizeTimer = 0, sizeLast = -Infinity, sizePending = null;
 function setTextSizeSoon(v) {
   clearTimeout(sizeTimer);
+  sizePending = v;
   const wait = 200 - (performance.now() - sizeLast);
-  const apply = () => { sizeLast = performance.now(); setTextSize(v); };
-  if (wait <= 0) apply(); else sizeTimer = setTimeout(apply, wait);
+  if (wait <= 0) flushTextSize(); else sizeTimer = setTimeout(flushTextSize, wait);
+}
+// Applies a waiting value now: when the finger lifts (`change`), when the page is hidden or closed, or when the timer fires.
+function flushTextSize() {
+  clearTimeout(sizeTimer);
+  if (sizePending === null) return;
+  const v = sizePending;
+  sizePending = null;
+  sizeLast = performance.now();
+  setTextSize(v);
 }
 
 function applyReadingLayout() {
@@ -1008,6 +1017,7 @@ function bindSheet() {
   const slider = document.getElementById('sh-size');
   slider.value = settings.size;
   slider.addEventListener('input', () => setTextSizeSoon(slider.value));
+  slider.addEventListener('change', flushTextSize);
   document.getElementById('sh-size-down').addEventListener('click', () => setTextSize(settings.size - 0.1));
   document.getElementById('sh-size-up').addEventListener('click', () => setTextSize(settings.size + 0.1));
   document.querySelectorAll('[data-lh]').forEach(b => b.addEventListener('click', () => { settings.lineHeight = Number(b.dataset.lh); saveSettings(); applyReadingLayout(); }));
@@ -1084,6 +1094,9 @@ function bindReader() {
   const size = document.getElementById('opt-size');
   size.value = settings.size;
   size.addEventListener('input', () => setTextSizeSoon(size.value));
+  size.addEventListener('change', flushTextSize);
+  window.addEventListener('pagehide', flushTextSize);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flushTextSize(); });
   document.getElementById('sh-size').value = settings.size;
   if (settings.layout !== 'scroll') settings.layout = 'pages';
   applyReadingLayout();
