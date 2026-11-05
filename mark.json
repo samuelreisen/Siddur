@@ -1,7 +1,7 @@
 {
-  "mark": 4,
-  "name": "Mk IV",
-  "title": "Paged book layout",
-  "notes": "Real page-by-page reading with page numbers and running headers, paper texture, Dark Paper theme.",
-  "created": "2026-11-05T03:40:36.523Z"
+  "mark": 5,
+  "name": "Mk V",
+  "title": "Slider fix",
+  "notes": "The text size slider always keeps its last value.",
+  "created": "2026-11-05T04:28:55.195Z"
 }

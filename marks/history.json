@@ -46,5 +46,17 @@
     "bytes": 1915230,
     "minShell": "1.0.0",
     "handoff": true
+  },
+  {
+    "mark": 5,
+    "name": "Mk V",
+    "title": "Slider fix",
+    "notes": "The text size slider always keeps its last value.",
+    "created": "2026-11-05T04:28:55.195Z",
+    "file": "marks/out/Siddur-MkV.oleh",
+    "sha256": "ab5176ae7e5d5ec231aedc9cb65797ffe95cc056b9c45ecfc6011adecb41fe0a",
+    "bytes": 1916287,
+    "minShell": "1.0.0",
+    "handoff": true
   }
 ]
